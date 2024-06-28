@@ -1,0 +1,7 @@
+*{
+    --bg-prime : #FE9FB3;
+}
+
+.bg-prime {
+    background-color: var(--bg-prime);
+}
