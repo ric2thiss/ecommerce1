@@ -67,30 +67,19 @@
     }
 
 
-    // Example function to validate login credentials
     function Validate_Login($email, $password) {
-        // Perform validation against your database or user storage
-        // Replace with your actual database connection and query logic
-        
-        // Example connection to MySQL database using PDO
-        $host = 'localhost';
-        $db_name = 'your_database_name';
-        $username = 'your_database_username';
-        $password_db = 'your_database_password';
+        $conn = dbconn(); // Connect to the database
         
         try {
-            $pdo = new PDO("mysql:host={$host};dbname={$db_name}", $username, $password_db);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
-            // Prepare SQL statement to fetch user details by email and password
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-            $stmt->execute(['email' => $email]);
+            // Prepare SQL statement to fetch user details by email
+            $stmt = $conn->prepare("SELECT * FROM users WHERE Email = ?");
+            $stmt->execute([$email]);
             
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($user) {
                 // Verify password
-                if (password_verify($password, $user['password'])) {
+                if (password_verify($password, $user['Password'])) {
                     // Password matches, login successful
                     return true;
                 } else {
@@ -105,8 +94,7 @@
         } catch(PDOException $e) {
             // Handle database connection or query errors
             // You can log the error or display a generic message to the user
-            // Example:
-            error_log("Connection failed: " . $e->getMessage());
+            error_log("Database Error: " . $e->getMessage());
             return false;
         }
     }
