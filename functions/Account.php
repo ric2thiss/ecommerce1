@@ -84,6 +84,7 @@
                     return true;
                 } else {
                     // Invalid password
+                    echo $password;
                     return false;
                 }
             } else {
