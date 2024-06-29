@@ -34,8 +34,9 @@
         if (Validate_Login($email, $password)) {
             session_start();
             $_SESSION['logged_in'] = true;
+            $_SESSION['email'] = $email;
             // Redirect to dashboard or any other page after successful login
-            header('Location: ../dashboard/');
+            header('Location: ../profile/');
             exit;
         } else {
             // Handle invalid credentials scenario
