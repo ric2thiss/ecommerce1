@@ -1,3 +1,5 @@
+
+
 <style>
     .gradient-custom-2 {
         background: #ee9ca7;  /* fallback for old browsers */
@@ -24,6 +26,8 @@
     // Include the function definition (assuming Create_Account() is defined elsewhere)
     include '../../functions/Account.php'; 
 
+    session_start();
+
     $login_error = '';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -32,7 +36,6 @@
 
         // Validate credentials (example logic, replace with your actual validation)
         if (Validate_Login($email, $password)) {
-            session_start();
             $_SESSION['logged_in'] = true;
             $_SESSION['email'] = $email;
             // Redirect to dashboard or any other page after successful login
@@ -42,6 +45,11 @@
             // Handle invalid credentials scenario
             $login_error = 'Invalid email or password. Please try again.';
         }
+    }
+
+    if (!empty($_SESSION["email"]) && $_SESSION["logged_in"]) {
+        header('Location: ../profile/');
+        exit;
     }
 ?>
 

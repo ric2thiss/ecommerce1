@@ -4,7 +4,7 @@
 require_once '../../static/Header.php';
 
 require('../../components/Navbar.php');
-require('../../components/Header.php');
+// require('../../components/Header.php');
 
 ?>
 
@@ -16,9 +16,9 @@ require('../../components/Header.php');
         
         ?>
         <!-- Header-->
-        <?php
-        echo Headers();
-        ?>
+        <div class="container bg-prime">
+            <h1>Profile</h1>
+        </div>
         
     
         <?php
