@@ -21,10 +21,9 @@
 </style>
 
 <?php
-    include '../../static/Header.php';
+    include '../Header.php';
 
-    // Include the function definition (assuming Create_Account() is defined elsewhere)
-    include '../../functions/Account.php'; 
+    include '../Account.php'; 
 
     session_start();
 
@@ -39,7 +38,7 @@
             $_SESSION['logged_in'] = true;
             $_SESSION['email'] = $email;
             // Redirect to dashboard or any other page after successful login
-            header('Location: ../profile/');
+            header('Location: profile.php');
             exit;
         } else {
             // Handle invalid credentials scenario
@@ -48,9 +47,10 @@
     }
 
     if (!empty($_SESSION["email"]) && $_SESSION["logged_in"]) {
-        header('Location: ../profile/');
+        header('Location: profile.php');
         exit;
     }
+
 ?>
 
 <?=HeaderStatic("Ekay's Scents - Log In")?>
@@ -94,7 +94,7 @@
 
                                     <div class="d-flex align-items-center justify-content-center pb-4">
                                         <p class="mb-0 me-2">Don't have an account?</p>
-                                        <a href="../register/" class="btn btn-outline-danger">Create new</a>
+                                        <a href="../register.php" class="btn btn-outline-danger">Create new</a>
                                     </div>
 
                                 </form>

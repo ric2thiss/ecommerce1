@@ -1,0 +1,232 @@
+
+<?php
+// Require
+require_once '../Header.php';
+
+require('../components/Navbar.php');
+
+// require('../functions/Account.php')  
+// require('../../components/Header.php');
+session_start();
+$user = getAccountDetails($_SESSION["email"]);
+?>
+
+<?=HeaderStatic("Home")?>
+    <body>
+        <!-- Navigation-->
+        <?php  
+        echo Navbar();
+        
+        ?>
+        <!-- Header-->
+
+        <style>
+            .profile_details{
+                display: flex;
+                align-items: center;
+            }
+        </style>
+        <div class="container p-5 mt-5 mb-5" style="background-color: #FE9FB3;">
+            <!-- <h1 class="text-white">Profile</h1> -->
+            <div class="profile_details text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="white" class="bi bi-person-circle" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                </svg>
+                <div class="p-2">
+                    <h3><?php echo $user["FirstName"] .  " " . $user["LastName"] ?></h3>
+                    <span><?php echo ($user["Role"]) ? "Admin": "Member"; ?> since <?php echo $user["RegDate"] ?></span>
+                </div>
+            </div>
+        </div>
+
+        <?php
+            if($user["Role"]){ 
+                ?>
+                <div class="container">
+                    <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+                        Dashboard
+                    </button>
+                    /
+                    <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Add Product
+                    </button>
+                </div>
+                    <div class="container mb-5 mt-5" style="display:flex;justify-content:center; gap:.8rem;">
+                            <div class="col-xl-4 col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">Total Product 
+                                        <h1>0</h1>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-dark stretched-link" href="pending-post.php">View</a>
+                                        <div class="small text-dark"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">Orders 
+                                        <h1>0</h1>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-dark stretched-link" href="pending-post.php">View</a>
+                                        <div class="small text-dark"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">Customers 
+                                        <h1>0</h1>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-dark stretched-link" href="pending-post.php">View</a>
+                                        <div class="small text-dark"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+
+                    <div class="container mb-5 mt-5" style="display:flex;justify-content:center; gap:.8rem;">
+                        <div class="col-xl-4 col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">Available 
+                                        <h1>0</h1>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-dark stretched-link" href="pending-post.php">View</a>
+                                        <div class="small text-dark"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">Out of Stock 
+                                        <h1>0</h1>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-dark stretched-link" href="pending-post.php">View</a>
+                                        <div class="small text-dark"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-body">Sales 
+                                        <h1>0</h1>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-dark stretched-link" href="pending-post.php">View</a>
+                                        <div class="small text-dark"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="container mt-5 mb-5">
+                        <h4>Orders</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">First</th>
+                                <th scope="col">Last</th>
+                                <th scope="col">Handle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <th scope="row">1</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">2</th>
+                                <td>Jacob</td>
+                                <td>Thornton</td>
+                                <td>@fat</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">3</th>
+                                <td colspan="2">Larry the Bird</td>
+                                <td>@twitter</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="container " style="display:flex;justify-content:center; gap:1rem;">
+                        <div class="container border" >
+                            <h5>Tickets</h5>
+                        </div>
+                        <div class="container border" >
+                            <h5>Product Trend</h5>
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                <?php
+            }else{
+                ?>
+                <div class="container ">
+                    <h1>My Account</h1>
+                    <hr>
+                    <div>
+                        <h5>Purchase History</h5>
+                    </div>
+                </div>
+                <?php
+            }
+
+        ?>
+        <div class="modal" tabindex="-1"  id="exampleModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Product Title">
+                        <label for="floatingInput">Product Title</label>
+                    </div>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Product Description" id="floatingTextarea2" style="height: 100px"></textarea>
+                        <label for="floatingTextarea2">Product Description</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFileSm" class="form-label"></label>
+                        <input class="form-control form-control-sm" id="formFileSm" type="file" accept=".jpg, .jpeg, .png">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Add Product</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    
+        
+    
+        <?php
+        include '../components/Footer.php';
+        ?>
+
+        <script>
+            const myModal = document.getElementById('myModal')
+            const myInput = document.getElementById('myInput')
+
+            myModal.addEventListener('shown.bs.modal', () => {
+            myInput.focus()
+            })
+        </script>
+    </body>
+</html>

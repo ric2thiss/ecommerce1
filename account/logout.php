@@ -13,7 +13,7 @@
         session_destroy();
 
         // Redirect to the login page or home page
-        header("Location: ../account/login/");
+        header("Location: ../account/login.php");
         exit;
     }
 

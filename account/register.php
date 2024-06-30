@@ -1,10 +1,10 @@
 
 <?php
-    include '../../static/Header.php';
+    include '../static/Header.php';
 
     // Include the function definition (assuming Create_Account() is defined elsewhere)
     // Ensure this path is correct relative to your current PHP file
-    include '../../functions/Account.php'; 
+    include '../functions/Account.php'; 
 
     $message = '';
 

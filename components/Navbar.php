@@ -1,11 +1,11 @@
 <?php
-    require_once("../../functions/Account.php");
+    include '../Account.php';
      function SecureRoute() {
-        session_start(); // Start the session
+        // session_start(); // Start the session
 
         // Check if the user is logged in
         if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-            header('Location: account/login/'); // Redirect to the login page
+            header('Location: account/login.php'); // Redirect to the login page
             exit(); // Ensure no further code is executed
         }
     }
@@ -16,20 +16,22 @@
         SecureRoute();
         
 
-        print_r($_SESSION);
+        // print_r($_SESSION);  
         ?> 
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
                     <div class="container d-flex justify-content-between px-4 px-lg-5">
-                        <picture>
-                            <source srcset="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" media="(min-width: 768px)">
-                            <img src="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" alt="logo">
-                        </picture>
+                        <a href="../index.php">
+                            <picture>
+                                <source srcset="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" media="(min-width: 768px)">
+                                <img src="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" alt="logo">
+                            </picture>
+                        </a>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                                <li class="nav-item"><a class="nav-link active" aria-current="page" href="../index.php">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="../about.php">About</a></li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -53,7 +55,7 @@
                                     </svg>
                                     <span><?php echo $firstName["FirstName"] ?></span>
                                 </button>
-                                <a href="../../functions/logout.php" class="btn">Logout</a>
+                                <a href="../account/logout.php" class="btn">Logout</a>
 
 
                                 <?php
