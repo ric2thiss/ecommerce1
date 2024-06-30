@@ -1,4 +1,5 @@
 <?php
+    require_once("../../functions/Account.php");
      function SecureRoute() {
         session_start(); // Start the session
 
