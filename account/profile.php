@@ -56,7 +56,7 @@ $user = getAccountDetails($_SESSION["email"]);
                             <div class="col-xl-4 col-md-6">
                                 <div class="card mb-4">
                                     <div class="card-body">Total Product 
-                                        <h1>0</h1>
+                                        <h1><?=getAllProductCount()?></h1>
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-dark stretched-link" href="pending-post.php">View</a>
@@ -187,29 +187,37 @@ $user = getAccountDetails($_SESSION["email"]);
         <div class="modal" tabindex="-1"  id="exampleModal">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Create Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" placeholder="Product Title">
-                        <label for="floatingInput">Product Title</label>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create Product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="form-floating">
-                        <textarea class="form-control" placeholder="Product Description" id="floatingTextarea2" style="height: 100px"></textarea>
-                        <label for="floatingTextarea2">Product Description</label>
-                    </div>
-                    <div class="mb-3">
-                        <label for="formFileSm" class="form-label"></label>
-                        <input class="form-control form-control-sm" id="formFileSm" type="file" accept=".jpg, .jpeg, .png">
-                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="productTitle" placeholder="Product Title">
+                            <label for="productTitle">Title</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" placeholder="Product Description" id="productDescription" style="height: 100px"></textarea>
+                            <label for="productDescription">Description</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="productPrice" placeholder="Price">
+                            <label for="productPrice">Price</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="floatingStock" placeholder="Stock" name="stock">
+                            <label for="floatingStock">Stock</label>
+                        </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Add Product</button>
-                </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Insert Image</label>
+                            <input class="form-control form-control-sm" id="productImage" type="file" accept=".jpg, .jpeg, .png">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn text-white" style="background-color: #FE9FB3;" id="addProductBtn">Add Product</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -228,5 +236,38 @@ $user = getAccountDetails($_SESSION["email"]);
             myInput.focus()
             })
         </script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#addProductBtn').on('click', function() {
+        var formData = new FormData();
+        formData.append('title', $('#productTitle').val());
+        formData.append('description', $('#productDescription').val());
+        formData.append('price', $('#productPrice').val());
+        formData.append('stock', $('#floatingStock').val());
+        formData.append('image', $('#productImage')[0].files[0]);
+
+        $.ajax({
+            url: 'add_product.php',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                alert(response);
+                // Optionally close the modal after successful submission
+                $('#exampleModal').modal('hide');
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error: ' + textStatus, errorThrown);
+            }
+        });
+    });
+});
+</script>
     </body>
 </html>

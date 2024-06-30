@@ -122,5 +122,19 @@ require_once('DB.php');
         }
     }
 
+    function getAllProductCount(){
+        $conn = dbconn();
+        try {
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM product");
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+        return $count;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return null;
+        }
+
+    }
+
 
 ?>
