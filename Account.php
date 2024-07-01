@@ -48,7 +48,7 @@ require_once('DB.php');
                 echo "
                 <script>
                 setTimeout(function() {
-                    window.location.href = '../login/'; // Redirect to login page
+                    window.location.href = '../login.php'; // Redirect to login page
                 }, 3000); // 3000 milliseconds = 3 seconds
                 </script>";
             } else {
@@ -120,6 +120,20 @@ require_once('DB.php');
             error_log("Database Error: " . $e->getMessage());
             return null;
         }
+    }
+
+    function getAllProducts(){
+        $conn = dbconn();
+        try {
+            $stmt = $conn->prepare("SELECT * FROM product");
+            $stmt->execute();
+            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $products;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return null;
+        }
+
     }
 
     function getAllProductCount(){

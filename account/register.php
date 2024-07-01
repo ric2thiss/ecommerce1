@@ -1,10 +1,10 @@
 
 <?php
-    include '../static/Header.php';
+    include '../Header.php';
 
     // Include the function definition (assuming Create_Account() is defined elsewhere)
     // Ensure this path is correct relative to your current PHP file
-    include '../functions/Account.php'; 
+    include '../Account.php'; 
 
     $message = '';
 
@@ -88,7 +88,7 @@
 
                                     <div class="d-flex align-items-center justify-content-center pb-4">
                                         <p class="mb-0 me-2">Already have an account?</p>
-                                        <a href="../login/" class="btn btn-outline-danger">Login</a>
+                                        <a href="login.php" class="btn btn-outline-danger">Login</a>
                                     </div>
 
                                 </form>
