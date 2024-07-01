@@ -23,8 +23,7 @@
                     <div class="container d-flex justify-content-between px-4 px-lg-5">
                         <a href="../index.php">
                             <picture>
-                                <source srcset="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" media="(min-width: 768px)">
-                                <img src="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" alt="logo">
+                                <img src="../logo.avif" alt="" class="img-fluid">
                             </picture>
                         </a>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>

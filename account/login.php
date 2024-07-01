@@ -65,7 +65,7 @@
                             <div class="card-body p-md-5 mx-md-4">
 
                                 <div class="text-center">
-                                    <img src="../../logo.avif" alt="logo">
+                                    <img src="../logo.avif" alt="logo" class="img-fluid">
                                     <hr>
                                     <h4 class="mt-1 mb-5 pb-1">Log In</h4>
                                 </div>

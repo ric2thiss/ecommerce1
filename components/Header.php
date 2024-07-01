@@ -2,6 +2,11 @@
 
     function Headers(){
         ?> 
+        <style>
+            .bg-prime{
+                background-color: #FE9FB3;
+            }
+        </style>
         <header class="bg-prime py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="text-center text-white">
