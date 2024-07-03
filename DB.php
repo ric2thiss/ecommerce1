@@ -2,8 +2,11 @@
     function dbconn(){
         $server = "localhost";
         $username = "root";
+        // riccharl_scent
         $password = "";
+        // ZSXr]@P]NpS$
         $db = "scent";
+        // riccharl_scent
         $conn = null;
         
         try {

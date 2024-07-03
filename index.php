@@ -18,11 +18,10 @@ if (empty($_SESSION["logged_in"])) {
         $_productID = $_POST["productID"];
         $_userID = $_POST["userID"];
         $_quantity = $_POST["quantity"];
-
         if(!empty($_productID) && !empty($_productID) && !empty($_productID)){
             addToCart();
         }else{
-            echo "alert('Failed to Add Product to Cart')";
+            echo "<script>alert('Product is not Available Out of stock yoursss!)'</script>";
         }
     }
 ?>
