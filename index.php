@@ -27,6 +27,11 @@ if (empty($_SESSION["logged_in"])) {
 ?>
 
 <?=HeaderStatic("Home")?>
+        <style>
+            .card:hover{
+                box-shadow: 0px 8px 22px 0px rgba(0,0,0,0.1);
+            }
+         </style>
     <body>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -99,11 +104,6 @@ if (empty($_SESSION["logged_in"])) {
         ?>
         
         <!-- Product Section-->
-         <style>
-            .card:hover{
-                box-shadow: 0px 8px 22px 0px rgba(0,0,0,0.1);
-            }
-         </style>
         <section class="py-5">
             <div class="container px-1 px-lg-5">
                 <a class="link-opacity-50 link-underline-dark text-dark"><span>(<?=getAllProductCount();?>) PRODUCTS</span></a>
@@ -142,8 +142,8 @@ if (empty($_SESSION["logged_in"])) {
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer d-flex gap-2 align-items-center justify-content-center p-4 pt-0 border-top-0 bg-transparent">
-                                <form action="product.php" method="post">
-                                    <input type="hidden" name="productID" value="<?php echo $product['ProductID']; ?>">
+                                <form action="product.php" method="POST">
+                                    <input type="hidden" name="pID" value="<?php echo $product['ProductID']; ?>">
                                     <button class="btn btn-outline-dark mt-auto" type="submit">
                                     <i class="fa-solid fa-arrow-up-right-from-square"></i> View
                                     </button>

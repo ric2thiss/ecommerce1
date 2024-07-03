@@ -135,7 +135,19 @@ require_once('DB.php');
         }
 
     }
-
+    function getRandomProducts() {
+        $conn = dbconn();
+        try {
+            // Prepare the SQL query to select 4 random products
+            $stmt = $conn->prepare("SELECT * FROM product ORDER BY RAND() LIMIT 4");
+            $stmt->execute();
+            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $products;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return null;
+        }
+    }
     function getAllProductCount(){
         $conn = dbconn();
         try {
