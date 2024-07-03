@@ -131,7 +131,7 @@ if (empty($_SESSION["logged_in"])) {
                                         <span>₱ <?php echo $product['Price']; ?></span>
                                     </div>
                                     <hr>
-                                    <p class="text-end" style="font-size: 12px!important;margin-top:-13px;">Stock(<?php echo $product['Stock']; ?>)</p>
+                                    <p class="text-end" style="font-size: 12px!important;margin-top:-13px;">Available Stock (<?php echo $product['Stock']; ?>)</p>
                                     <hr>
                                     <div class="text-start" style="font-size: 12px!important;display:flex;flex-direction:column;">
                                         <span>Description:</span>
@@ -150,9 +150,9 @@ if (empty($_SESSION["logged_in"])) {
                                     </button>
                                 </form>
                                 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-                                    <input type="text" name="productID" value="<?php echo $product['ProductID']; ?>">
-                                    <input type="text" name="userID" value="<?php echo $_SESSION['UserID']; ?>">
-                                    <input type="text" name="quantity" value="1">
+                                    <input type="hidden" name="productID" value="<?php echo $product['ProductID']; ?>">
+                                    <input type="hidden" name="userID" value="<?php echo $_SESSION['UserID']; ?>">
+                                    <input type="hidden" name="quantity" value="1">
                                     <button class="btn btn-outline-dark mt-auto" type="submit">
                                         <i class="fa-solid fa-cart-plus"></i> Add to Cart
                                     </button>

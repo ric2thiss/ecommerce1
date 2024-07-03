@@ -220,7 +220,7 @@ require_once('DB.php');
         $conn = dbconn();
         
         try {
-            $stmt = $conn->prepare("SELECT ProductTitle, Price, ProductImage, ProductDescription FROM products WHERE ProductID = :productID");
+            $stmt = $conn->prepare("SELECT ProductTitle, Price, ProductImage, ProductDescription FROM product WHERE ProductID = :productID");
             $stmt->bindParam(':productID', $productID);
             $stmt->execute();
             $product = $stmt->fetch(PDO::FETCH_ASSOC);
