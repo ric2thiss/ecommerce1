@@ -37,6 +37,17 @@
         if (Validate_Login($email, $password)) {
             $_SESSION['logged_in'] = true;
             $_SESSION['email'] = $email;
+            
+            $mail = getAccountDetails($email);
+            
+            // Ensure $mail contains the UserID key
+            if (isset($mail['UserID'])) {
+                $_SESSION['UserID'] = $mail['UserID'];
+            } else {
+                // Handle the case where UserID is not set in $mail
+                $login_error = 'User details not found. Please contact support.';
+            }
+            
             // Redirect to dashboard or any other page after successful login
             header('Location: profile.php');
             exit;

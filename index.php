@@ -12,6 +12,19 @@ if (empty($_SESSION["logged_in"])) {
     header("Location: account/login.php");
     exit();
 }
+
+
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        $_productID = $_POST["productID"];
+        $_userID = $_POST["userID"];
+        $_quantity = $_POST["quantity"];
+
+        if(!empty($_productID) && !empty($_productID) && !empty($_productID)){
+            addToCart();
+        }else{
+            echo "alert('Failed to Add Product to Cart')";
+        }
+    }
 ?>
 
 <?=HeaderStatic("Home")?>
@@ -73,7 +86,7 @@ if (empty($_SESSION["logged_in"])) {
                                 <div class="btn btn-outline-dark">
                                     <i class="bi-cart-fill me-1"></i>
                                     Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                                    <span class="badge bg-dark text-white ms-1 rounded-pill"><?=getCartCount()?></span>
                                 </div>
 
                             </div>
@@ -87,7 +100,15 @@ if (empty($_SESSION["logged_in"])) {
         ?>
         
         <!-- Product Section-->
+         <style>
+            .card:hover{
+                box-shadow: 0px 8px 22px 0px rgba(0,0,0,0.1);
+            }
+         </style>
         <section class="py-5">
+            <div class="container px-1 px-lg-5">
+                <a class="link-opacity-50 link-underline-dark text-dark"><span>(<?=getAllProductCount();?>) PRODUCTS</span></a>
+            </div>
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
 
@@ -97,28 +118,49 @@ if (empty($_SESSION["logged_in"])) {
 
                     foreach($products as $product) {
                     ?>
-                    <div class="col mb-5">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" src="account/<?php echo $product['ProductImage']; ?>" alt="Product Image" />
+                            <img class="card-img-top" style="border-bottom: 1px solid gray;" src="account/<?php echo $product['ProductImage']; ?>" alt="Product Image" />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder"><?php echo $product['ProductTitle']; ?></h5>
-                                    <!-- Product reviews-->
-                                    
-                                    <!-- Product price-->
-                                    
-                                    $<?php echo $product['Price']; ?>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="fw-bolder text-start"><?php echo $product['ProductTitle']; ?></h5>
+                                        <span>₱ <?php echo $product['Price']; ?></span>
+                                    </div>
+                                    <hr>
+                                    <p class="text-end" style="font-size: 12px!important;margin-top:-13px;">Stock(<?php echo $product['Stock']; ?>)</p>
+                                    <hr>
+                                    <div class="text-start" style="font-size: 12px!important;display:flex;flex-direction:column;">
+                                        <span>Description:</span>
+                                        <span style="width: 100%;">
+                                            <?php echo $product['ProductDescription']; ?>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center add-to-cart" data-product-id="<?php echo $product['ProductID']; ?>"><span class="btn btn-outline-dark mt-auto" href="#">Add to cart</span></div>
+                            <div class="card-footer d-flex gap-2 align-items-center justify-content-center p-4 pt-0 border-top-0 bg-transparent">
+                                <form action="product.php" method="post">
+                                    <input type="hidden" name="productID" value="<?php echo $product['ProductID']; ?>">
+                                    <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> View
+                                    </button>
+                                </form>
+                                <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+                                    <input type="text" name="productID" value="<?php echo $product['ProductID']; ?>">
+                                    <input type="text" name="userID" value="<?php echo $_SESSION['UserID']; ?>">
+                                    <input type="text" name="quantity" value="1">
+                                    <button class="btn btn-outline-dark mt-auto" type="submit">
+                                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
+
                     <?php
                     }
                     ?>
@@ -128,108 +170,5 @@ if (empty($_SESSION["logged_in"])) {
         <?php
         include 'components/Footer.php';
         ?>
-
-
-<!-- Add this script to your index.php -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.add-to-cart').forEach(button => {
-            button.addEventListener('click', function() {
-                const productId = this.dataset.productId;
-                const quantity = 1; // Default quantity to add
-
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', 'add_to_cart.php', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        // Update the cart UI with the response
-                        document.getElementById('cart').innerHTML = xhr.responseText;
-                    }
-                };
-
-                xhr.send('product_id=' + productId + '&quantity=' + quantity);
-            });
-        });
-
-        function updateQuantity(productId, change) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'update_cart.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById('cart').innerHTML = xhr.responseText;
-                }
-            };
-
-            xhr.send('product_id=' + productId + '&change=' + change);
-        }
-
-        document.getElementById('cart').addEventListener('click', function(e) {
-            if (e.target.classList.contains('increment')) {
-                const productId = e.target.dataset.productId;
-                updateQuantity(productId, 1);
-            } else if (e.target.classList.contains('decrement')) {
-                const productId = e.target.dataset.productId;
-                updateQuantity(productId, -1);
-            }
-        });
-    });
-
-    const cartBtn = document.getElementById('cartBtn')
-    cartBtn.addEventListener("click", ()=>{
-        alert("TEST")
-        document.querySelector('.cart-container').style.right = "0";
-    })
-</script>
-
-<!-- Cart container -->
-<style>
-        .cart-container {
-            position: fixed;
-            background-color: lightgray;
-            height: 100vh;
-            z-index: 9999;
-            top: 0;
-            right: -150%; /* Initially hidden off-screen */
-            width: 20%;
-            padding: 1rem;
-            transition: right 0.3s ease; /* Smooth sliding effect */
-        }
-
-        .cart-container.active {
-            right: 0; /* Slide in when active */
-        }
-
-        ul {
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-        }
-
-        ul li {
-            list-style-type: none;
-            margin: 1rem;
-        }
-
-        #checkout {
-            background-color: white;
-            padding: .5rem;
-        }
-    </style>
-
-        <div class="cart-container">
-
-            <hr>
-            <br>
-            <h3 class="text-center">Your Cart</h3>
-            <br>
-            <hr>
-            <div id="cart" class="my_cart">
-                <h5>Nothing in your cart</h5>
-            </div>
-        </div>
     </body>
 </html>

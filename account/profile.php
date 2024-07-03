@@ -25,6 +25,19 @@ $user = getAccountDetails($_SESSION["email"]);
                 display: flex;
                 align-items: center;
             }
+            #alert-success-product {
+            display: none;
+            padding: 10px;
+            background-color: green;
+            color: white;
+            z-index: 9999999;
+            right: 0;
+            position: fixed;
+            top: 1rem;
+            }
+            #alert-success-product.show {
+                display: block;
+            }
         </style>
         <div class="container p-5 mt-5 mb-5" style="background-color: #FE9FB3;">
             <!-- <h1 class="text-white">Profile</h1> -->
@@ -126,7 +139,7 @@ $user = getAccountDetails($_SESSION["email"]);
                     </div>
 
 
-                    <div class="container mt-5 mb-5">
+                    <div class="container mt-5 mb-5" id="dynamic-container">
                         <h4>Orders</h4>
                         <table class="table">
                             <thead>
@@ -173,17 +186,54 @@ $user = getAccountDetails($_SESSION["email"]);
                 <?php
             }else{
                 ?>
-                <div class="container ">
+                <div class="container">
                     <h1>My Account</h1>
+                    <hr>
+                    <h5>My Cart</h5>
+                    <?php
+                        $userCarts = getCart();
+                        if (!empty($userCarts)) {
+                            foreach ($userCarts as $userCart) {
+                                $product = getSpecificProductbyID($userCart['ProductID']);
+                                if ($product) {
+                                    echo '<div class="cart-item">';
+                                    echo '<p>Product ID: ' . htmlspecialchars($userCart['ProductID']) . '</p>';
+                                    echo '<p>Product Title: ' . htmlspecialchars($product['ProductTitle']) . '</p>';
+                                    echo '<p>Quantity: ' . htmlspecialchars($userCart['Quantity']) . '</p>';
+                                    echo "<hr>";
+                                    echo '</div>';
+                                } else {
+                                    // Handle case where product details could not be fetched
+                                    echo '<div class="cart-item">';
+                                    echo '<p>Product ID: ' . htmlspecialchars($userCart['ProductID']) . '</p>';
+                                    echo '<p>Product Details Not Available</p>';
+                                    echo '<p>Quantity: ' . htmlspecialchars($userCart['Quantity']) . '</p>';
+                                    echo "<hr>";
+                                    echo '</div>';
+                                }
+                            }
+                        } else {
+                    ?>
+                        <p>Nothing in my Cart <a href="shop.php">Shop Now!</a></p>
+                    <?php
+                        }
+                    ?>
                     <hr>
                     <div>
                         <h5>Purchase History</h5>
                     </div>
                 </div>
+
+
+
+
+
                 <?php
             }
 
         ?>
+
+        <!-- Adding of Product Form in Modal -->
         <div class="modal" tabindex="-1"  id="exampleModal">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -221,6 +271,12 @@ $user = getAccountDetails($_SESSION["email"]);
                 </div>
             </div>
         </div>
+
+        <!-- Success Alert -->
+        <div id="alert-success-product" class="alert alert-success" role="alert">
+            <span></span>
+        </div>
+
     
         
     
@@ -242,6 +298,18 @@ $user = getAccountDetails($_SESSION["email"]);
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+        function productAlertSuccess(res) {
+            const alert = document.querySelector("#alert-success-product");
+            const exampleModal = document.querySelector("#exampleModal");
+            alert.textContent = res;
+            alert.classList.add("show");
+            setTimeout(() => {
+                alert.classList.remove("show");
+                exampleModal.style.display = "none";
+                window.location = "./profile.php";
+            }, 1500);
+        }
 $(document).ready(function() {
     $('#addProductBtn').on('click', function() {
         var formData = new FormData();
@@ -258,9 +326,10 @@ $(document).ready(function() {
             contentType: false,
             processData: false,
             success: function(response) {
-                alert(response);
+                // alert(response);
                 // Optionally close the modal after successful submission
-                $('#exampleModal').modal('hide');
+                // $('#exampleModal').modal('hide');
+                productAlertSuccess(response);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error: ' + textStatus, errorThrown);

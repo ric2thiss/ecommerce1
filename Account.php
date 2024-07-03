@@ -125,7 +125,7 @@ require_once('DB.php');
     function getAllProducts(){
         $conn = dbconn();
         try {
-            $stmt = $conn->prepare("SELECT * FROM product");
+            $stmt = $conn->prepare("SELECT * FROM product ORDER BY ProductID DESC");
             $stmt->execute();
             $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $products;
@@ -149,6 +149,89 @@ require_once('DB.php');
         }
 
     }
+    
+    function addToCart() {
+        $conn = dbconn();
+        $productID = $_POST['productID'];
+        $userID = $_POST['userID'];
+        $quantity = $_POST['quantity'];
+        
+        try {
+            $stmt = $conn->prepare("INSERT INTO carts (ProductID, UserID, Quantity)
+                                    VALUES (:productID, :userID, :quantity)");
+            $stmt->bindParam(':productID', $productID);
+            $stmt->bindParam(':userID', $userID);
+            $stmt->bindParam(':quantity', $quantity);
+            $stmt->execute();
+            return true;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    function getCart() {
+        $conn = dbconn();
+        $userID = $_SESSION['UserID'];
+        
+        try {
+            $stmt = $conn->prepare("SELECT * FROM carts WHERE UserID = :userID");
+            $stmt->bindParam(':userID', $userID);
+            $stmt->execute();
+            $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $cart;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return null;
+        }
+    }
+    
+    function getCartCount() {
+        $conn = dbconn();
+        $userID = $_SESSION['UserID'];
+        
+        try {
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM carts WHERE UserID = :userID");
+            $stmt->bindParam(':userID', $userID);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            return $count;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return null;
+        }
+    }
+    
+    function deleteFromCart($cartID) {
+        $conn = dbconn();
+        
+        try {
+            $stmt = $conn->prepare("DELETE FROM carts WHERE CartID = :cartID");
+            $stmt->bindParam(':cartID', $cartID);
+            $stmt->execute();
+            return true;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    function getSpecificProductbyID($productID) {
+        $conn = dbconn();
+        
+        try {
+            $stmt = $conn->prepare("SELECT ProductTitle, Price, ProductImage, ProductDescription FROM products WHERE ProductID = :productID");
+            $stmt->bindParam(':productID', $productID);
+            $stmt->execute();
+            $product = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $product;
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return null;
+        }
+    }
+    
+    
 
 
 ?>
