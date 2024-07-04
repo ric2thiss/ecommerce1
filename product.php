@@ -12,8 +12,33 @@ if (empty($_SESSION["logged_in"])) {
     header("Location: account/login.php");
     exit();
 }
+// Adding cart in specified product
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add_Cart'])) {
+        $_productID = $_POST["productID"] ?? '';
+        $_userID = $_POST["userID"] ?? '';
+        $_quantity = $_POST["quantity"] ?? '';
 
-// Check if pID is set in POST, if not check session
+        if (!empty($_productID) && !empty($_userID) && !empty($_quantity)) {
+            addToCart();
+        } else {
+            header("Location: index.php");
+            exit();
+        }
+    } elseif (isset($_POST['add_to_cart'])) {
+        $_productID = $_POST["productID"] ?? '';
+        $_userID = $_POST["userID"] ?? '';
+        $_quantity = $_POST["quantity"] ?? '';
+
+        if (!empty($_productID) && !empty($_userID) && !empty($_quantity)) {
+            addToCart();
+        } else {
+            echo "<script>alert('Product is not available or out of stock!')</script>";
+        }
+    }
+}
+
+// Set or retrieve pID from session or POST
 if (isset($_POST["pID"])) {
     $_SESSION["pID"] = $_POST["pID"];
 } elseif (isset($_SESSION["pID"])) {
@@ -23,10 +48,8 @@ if (isset($_POST["pID"])) {
     exit();
 }
 
+// Get specific product by ID
 $product = getSpecificProductbyID($_POST["pID"]);
-
-// echo htmlspecialchars($_POST["pID"]);
-// print_r($_POST);
 ?>
 
 <?= HeaderStatic("Product") ?>
@@ -36,24 +59,17 @@ if (!empty($_POST["pID"])) {
 ?>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container d-flex justify-content-between px-4 px-lg-5">
-            <picture>
-                <source srcset="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" media="(min-width: 768px)">
-                <img src="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" alt="logo">
-            </picture>
+            <a href="index.php">
+                <picture>
+                    <source srcset="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" media="(min-width: 768px)">
+                    <img src="https://purebloom.ch/cdn/shop/files/PureBloom_Logo.png?v=1697338824&width=400" alt="logo">
+                </picture>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#!">All Products</a></li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                            <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
-                        </ul>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
                 </ul>
 
                 <?php
@@ -71,7 +87,7 @@ if (!empty($_POST["pID"])) {
                 <?php
                 } else {
                 ?>
-                    <a href="../account/login/" class="mx-2 btn btn-default">
+                    <a href="../account/login.php" class="mx-2 btn btn-default">
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
                             <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
@@ -106,11 +122,17 @@ if (!empty($_POST["pID"])) {
                     </div>
                     <p class="lead"><?php echo htmlspecialchars($product["ProductDescription"]); ?></p>
                     <div class="d-flex">
-                        <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
-                        <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                            <i class="bi-cart-fill me-1"></i>
-                            Add to cart
-                        </button>
+                        <!-- Can you make this add to cart button working without contradicting any other codes? -->
+                        <form class="d-flex" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+
+                            <input type="hidden" name="productID" value="<?php echo htmlspecialchars($relatedProduct['ProductID']); ?>">
+                            <input type="hidden" name="userID" value="<?php echo htmlspecialchars($_SESSION['UserID']); ?>">
+                            <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="quantity" value="1">
+                            <button class="btn btn-outline-dark flex-shrink-0" type="submit" name="add_Cart">
+                                <i class="bi-cart-fill me-1"></i>
+                                Add to cart
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -134,7 +156,7 @@ if (!empty($_POST["pID"])) {
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex justify-content-between flex-column align-items-center">
                                         <h5 class="fw-bolder text-start"><?php echo htmlspecialchars($relatedProduct['ProductTitle']); ?></h5>
                                         <span>₱ <?php echo htmlspecialchars($relatedProduct['Price']); ?></span>
                                     </div>
@@ -157,11 +179,11 @@ if (!empty($_POST["pID"])) {
                                         <i class="fa-solid fa-arrow-up-right-from-square"></i> View
                                     </button>
                                 </form>
-                                <form action="add_to_cart.php" method="post">
+                                <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
                                     <input type="hidden" name="productID" value="<?php echo htmlspecialchars($relatedProduct['ProductID']); ?>">
                                     <input type="hidden" name="userID" value="<?php echo htmlspecialchars($_SESSION['UserID']); ?>">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    <button class="btn btn-outline-dark mt-auto" type="submit" name="add_to_cart">
                                         <i class="fa-solid fa-cart-plus"></i> Add to Cart
                                     </button>
                                 </form>

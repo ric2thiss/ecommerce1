@@ -125,7 +125,7 @@ if (empty($_SESSION["logged_in"])) {
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex justify-content-between flex-column align-items-center">
                                         <h5 class="fw-bolder text-start"><?php echo $product['ProductTitle']; ?></h5>
                                         <span>₱ <?php echo $product['Price']; ?></span>
                                     </div>
