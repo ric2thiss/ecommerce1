@@ -11,7 +11,7 @@ session_start();
 $user = getAccountDetails($_SESSION["email"]);
 ?>
 
-<?=HeaderStatic("Home")?>
+<?=HeaderStatic($user["FirstName"] . " - Profile")?>
     <body>
         <!-- Navigation-->
         <?php  
@@ -28,10 +28,10 @@ $user = getAccountDetails($_SESSION["email"]);
             #alert-success-product {
             display: none;
             padding: 10px;
-            background-color: green;
-            color: white;
+            background-color: white;
+            color: black;
             z-index: 9999999;
-            right: 0;
+            right: 2rem;
             position: fixed;
             top: 1rem;
             }
@@ -91,7 +91,7 @@ $user = getAccountDetails($_SESSION["email"]);
                             <div class="col-xl-4 col-md-6">
                                 <div class="card mb-4">
                                     <div class="card-body">Customers 
-                                        <h1>0</h1>
+                                        <h1><?=countUsersReg();?></h1>
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-dark stretched-link" href="pending-post.php">View</a>
@@ -105,7 +105,7 @@ $user = getAccountDetails($_SESSION["email"]);
                         <div class="col-xl-4 col-md-6">
                                 <div class="card mb-4">
                                     <div class="card-body">Available 
-                                        <h1>0</h1>
+                                        <h1><?=countAvailableProducts()?></h1>
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-dark stretched-link" href="pending-post.php">View</a>
@@ -116,7 +116,7 @@ $user = getAccountDetails($_SESSION["email"]);
                             <div class="col-xl-4 col-md-6">
                                 <div class="card mb-4">
                                     <div class="card-body">Out of Stock 
-                                        <h1>0</h1>
+                                        <h1><?php echo countOutOfStockProducts(); ?></h1>
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-dark stretched-link" href="pending-post.php">View</a>
@@ -177,6 +177,15 @@ $user = getAccountDetails($_SESSION["email"]);
                         </div>
                         <div class="container border" >
                             <h5>Product Trend</h5>
+                            <?php
+                                $result = getHighestCartCount();
+                                $product_name = getSpecificProductbyID($result['productID']);
+                                if ($result) {
+                                    echo "Product with the highest cart count : <strong>" . $product_name['ProductTitle'] . "</strong, Count: <strong>". " With " . $result['cart_count'] . " count </strong>";
+                                } else {
+                                    echo "No products found in carts or error occurred.";
+                                }
+                            ?>
                         </div>
 
                     </div>
@@ -214,7 +223,7 @@ $user = getAccountDetails($_SESSION["email"]);
                             }
                         } else {
                     ?>
-                        <p>Nothing in my Cart <a href="shop.php">Shop Now!</a></p>
+                        <p>Nothing in my Cart <a href="index.php">Shop Now!</a></p>
                     <?php
                         }
                     ?>

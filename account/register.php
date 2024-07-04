@@ -15,7 +15,7 @@
         // Display or use $message as needed (e.g., show success/error message to the user)
     }
 ?>
-
+<?=HeaderStatic("Ekay's Scents - Register")?>
 <style>
     .gradient-custom-2 {
         background: #ee9ca7;  /* fallback for old browsers */
@@ -37,8 +37,6 @@
 
     /* Add additional custom styling as needed */
 </style>
-
-<?=HeaderStatic("Ekay's Scents - Register")?>
 
 <section class="h-100 gradient-form" style="background-color: #eee;">
     <div class="container py-5 h-100">

@@ -52,7 +52,7 @@ if (isset($_POST["pID"])) {
 $product = getSpecificProductbyID($_POST["pID"]);
 ?>
 
-<?= HeaderStatic("Product") ?>
+<?= HeaderStatic($product["ProductTitle"]) ?>
 
 <?php
 if (!empty($_POST["pID"])) {
@@ -83,7 +83,7 @@ if (!empty($_POST["pID"])) {
                         </svg>
                         <span><?php echo htmlspecialchars($firstName["FirstName"]); ?></span>
                     </a>
-                    <a href="logout.php" class="btn">Logout</a>
+                    <a href="account/logout.php" class="btn">Logout</a>
                 <?php
                 } else {
                 ?>
