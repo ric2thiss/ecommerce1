@@ -38,6 +38,14 @@ $user = getAccountDetails($_SESSION["email"]);
             #alert-success-product.show {
                 display: block;
             }
+            .cart-item{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                /* border-bottom: 1px solid black; */
+                text-align: end;
+                align-items: center;
+            }
         </style>
         <div class="container p-5 mt-5 mb-5" style="background-color: #FE9FB3;">
             <!-- <h1 class="text-white">Profile</h1> -->
@@ -205,12 +213,34 @@ $user = getAccountDetails($_SESSION["email"]);
                             foreach ($userCarts as $userCart) {
                                 $product = getSpecificProductbyID($userCart['ProductID']);
                                 if ($product) {
-                                    echo '<div class="cart-item">';
-                                    echo '<p>Product ID: ' . htmlspecialchars($userCart['ProductID']) . '</p>';
-                                    echo '<p>Product Title: ' . htmlspecialchars($product['ProductTitle']) . '</p>';
-                                    echo '<p>Quantity: ' . htmlspecialchars($userCart['Quantity']) . '</p>';
-                                    echo "<hr>";
-                                    echo '</div>';
+
+                                    ?>
+                                    <hr>
+                                    <div class="cart-item">
+                                        <div>
+                                            <img src="<?php echo $product['ProductImage']; ?>" alt="Product Image" width="250" height="250">
+                                        </div>
+                                        <div class="info">
+                                            <p>SKU : <?=htmlspecialchars($userCart['ProductID'])?></p>
+                                            <p class="fs-4 text fw-bold"> <?=htmlspecialchars($product['ProductTitle'])?></p>
+                                            <p class="fs-5 text">Quantity : <?=htmlspecialchars($userCart['Quantity'])?></p>
+
+                                            <form class="d-flex text-end" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+                                            <input type="hidden" name="productID" value="<?=htmlspecialchars($userCart['ProductID'])?>">
+                                            <input type="hidden" name="userID" value="<?=htmlspecialchars($_SESSION['UserID'])?>">
+                                            <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="quantity" value="<?=htmlspecialchars($userCart['Quantity'])?>">
+                                            <button class="mx-2 btn btn-outline-dark flex-shrink-0" type="submit" name="add_Cart">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                            <button class="btn btn-outline-dark flex-shrink-0" type="submit" name="add_Cart">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
+                                        </form>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <?php
                                 } else {
                                     // Handle case where product details could not be fetched
                                     echo '<div class="cart-item">';
@@ -223,7 +253,7 @@ $user = getAccountDetails($_SESSION["email"]);
                             }
                         } else {
                     ?>
-                        <p>Nothing in my Cart <a href="index.php">Shop Now!</a></p>
+                        <p>Nothing in my Cart <a href="../index.php">Shop Now!</a></p>
                     <?php
                         }
                     ?>
