@@ -26,31 +26,30 @@ $user = getAccountDetails($_SESSION["email"]);
         return $price * $quantity;
     }
     
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (isset($_POST["minus"])) {
-            echo "THIS IS MINUS";
-            $id = htmlspecialchars($_POST["p_id"]);
-            $qty = intval($_POST["qty"]); // Ensure quantity is an integer
-            $uid = htmlspecialchars($_SESSION["UserID"]);
+    // if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    //     if (isset($_POST["minus"])) {
+    //         // echo "THIS IS MINUS";
+    //         $id = htmlspecialchars($_POST["p_id"]);
+    //         $qty = intval($_POST["qty"]); // Ensure quantity is an integer
+    //         $uid = htmlspecialchars($_SESSION["UserID"]);
+    //         if ($qty < 1) {
+    //             deleteItemFromCart($uid, $id);
+    //         } else if($qty > 0) {
+    //             minusItemFromCart($uid, $id, $qty);
+    //         }
+    //     } elseif (isset($_POST["plus"])) {
+    //         // echo "THIS IS PLUS";
+    //         $id = htmlspecialchars($_POST["p_id"]);
+    //         $qty = intval($_POST["qty"]); // Ensure quantity is an integer
+    //         $uid = htmlspecialchars($_SESSION["UserID"]);
     
-            if ($qty < 1) {
-                deleteItemFromCart($uid, $id);
-            } else {
-                minusItemFromCart($uid, $id, $qty);
-            }
-        } elseif (isset($_POST["plus"])) {
-            echo "THIS IS PLUS";
-            $id = htmlspecialchars($_POST["p_id"]);
-            $qty = intval($_POST["qty"]); // Ensure quantity is an integer
-            $uid = htmlspecialchars($_SESSION["UserID"]);
-    
-            if ($qty < 1) {
-                deleteItemFromCart($uid, $id);
-            } else {
-                updateCart($uid, $id, $qty);
-            }
-        }
-    }
+    //         if ($qty < 1) {
+    //             deleteItemFromCart($uid, $id);
+    //         } else {
+    //             updateCart($uid, $id, $qty);
+    //         }
+    //     }
+    // }
     
 ?>
 
@@ -257,7 +256,9 @@ $user = getAccountDetails($_SESSION["email"]);
                         if (!empty($userCarts)) {
                             foreach ($userCarts as $userCart) {
                                 $product = getSpecificProductbyID($userCart['ProductID']);
-                                
+                                // if($userCart['Quantity'] < 1){
+                                //     deleteItemFromCart($_SESSION['UserID'],$userCart['ProductID']);
+                                // }
                                 if ($product) {
                                     ?>
                                     <hr>
@@ -273,13 +274,13 @@ $user = getAccountDetails($_SESSION["email"]);
                                             <form class="d-flex justify-content-end" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
                                                 <input type="hidden" name="p_id" value="<?=htmlspecialchars($userCart['ProductID'])?>">
                                                 <input type="hidden" name="u_id" value="<?=htmlspecialchars($_SESSION['UserID'])?>">
-                                                <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="qty" value="<?=htmlspecialchars($userCart['Quantity'])?>">
-                                                <button class="mx-2 btn btn-outline-dark flex-shrink-0" type="submit" name="plus">
+                                                <input disabled class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="qty" value="<?=htmlspecialchars($userCart['Quantity'])?>">
+                                                <a href="update.php?sku=<?=htmlspecialchars($userCart['ProductID'])?>&key=plus" class="mx-2 btn btn-outline-dark flex-shrink-0" name="plus">
                                                     <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                                <button class="btn btn-outline-dark flex-shrink-0" type="submit" name="minus">
+                                                </a>
+                                                <a href="delete_product.php?sku=<?=htmlspecialchars($userCart['ProductID'])?>&key=minus" class="btn btn-outline-dark flex-shrink-0" name="minus">
                                                     <i class="fa-solid fa-minus"></i>
-                                                </button>
+                                                </a>
                                                 <br>
                                             </form>
                                             <p class="fs-5 text mt-3">₱ <?=htmlspecialchars(number_format($product['Price'], 2))?> each X <?=htmlspecialchars($userCart['Quantity'])?></p>
@@ -312,6 +313,8 @@ $user = getAccountDetails($_SESSION["email"]);
                     <hr>
                     <div>
                         <h5>Purchase History</h5>
+                        <br>
+                        <h6>You have not made any purchases yet!</h6>
                     </div>
                 </div>
 

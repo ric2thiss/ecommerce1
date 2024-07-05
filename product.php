@@ -145,7 +145,7 @@ if (!empty($_POST["pID"])) {
             <h2 class="fw-bolder mb-4">Related products</h2>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 <?php
-                $relatedProducts = getRandomProducts(); // Assuming this function exists and returns 4 random products
+                $relatedProducts = getRandomProducts(); // returns 4 random products
                 foreach ($relatedProducts as $relatedProduct) {
                 ?>
                     <div class="col mb-5">
