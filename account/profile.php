@@ -6,9 +6,10 @@ require('../components/Navbar.php');
 session_start();
 $user = getAccountDetails($_SESSION["email"]);
 
-print_r($_SESSION);
-print_r($_POST);
-print_r($_SESSION);
+// echo "SESSION : ";
+// print_r($_SESSION);
+// echo "POST : ";
+// print_r($_POST);
 
 
     function calculateTotalAmount($cartItems) {
@@ -21,11 +22,36 @@ print_r($_SESSION);
         }
         return $totalAmount;
     }
-
-    if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["plus"])){
-        echo $_POST["plus"];
-
+    function calculateTotalPrice($price, $quantity) {
+        return $price * $quantity;
     }
+    
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST["minus"])) {
+            echo "THIS IS MINUS";
+            $id = htmlspecialchars($_POST["p_id"]);
+            $qty = intval($_POST["qty"]); // Ensure quantity is an integer
+            $uid = htmlspecialchars($_SESSION["UserID"]);
+    
+            if ($qty < 1) {
+                deleteItemFromCart($uid, $id);
+            } else {
+                minusItemFromCart($uid, $id, $qty);
+            }
+        } elseif (isset($_POST["plus"])) {
+            echo "THIS IS PLUS";
+            $id = htmlspecialchars($_POST["p_id"]);
+            $qty = intval($_POST["qty"]); // Ensure quantity is an integer
+            $uid = htmlspecialchars($_SESSION["UserID"]);
+    
+            if ($qty < 1) {
+                deleteItemFromCart($uid, $id);
+            } else {
+                updateCart($uid, $id, $qty);
+            }
+        }
+    }
+    
 ?>
 
 <?=HeaderStatic($user["FirstName"] . " - Profile")?>
@@ -227,11 +253,12 @@ print_r($_SESSION);
                     <?php
                         $userCarts = getCart();
                         $totalAmount = calculateTotalAmount($userCarts);
+                        
                         if (!empty($userCarts)) {
                             foreach ($userCarts as $userCart) {
                                 $product = getSpecificProductbyID($userCart['ProductID']);
+                                
                                 if ($product) {
-
                                     ?>
                                     <hr>
                                     <div class="cart-item">
@@ -244,10 +271,10 @@ print_r($_SESSION);
                                             <p class="fs-5 text">Quantity : <?=htmlspecialchars($userCart['Quantity'])?></p>
 
                                             <form class="d-flex justify-content-end" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-                                                <input type="hidden" name="productID" value="<?=htmlspecialchars($userCart['ProductID'])?>">
-                                                <input type="hidden" name="userID" value="<?=htmlspecialchars($_SESSION['UserID'])?>">
-                                                <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="quantity" value="<?=htmlspecialchars($userCart['Quantity'])?>">
-                                                <button class="mx-2 btn btn-outline-dark flex-shrink-0" type="submit" name="plus" value="PLUS <?=htmlspecialchars($userCart['ProductID'])?>">
+                                                <input type="hidden" name="p_id" value="<?=htmlspecialchars($userCart['ProductID'])?>">
+                                                <input type="hidden" name="u_id" value="<?=htmlspecialchars($_SESSION['UserID'])?>">
+                                                <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="qty" value="<?=htmlspecialchars($userCart['Quantity'])?>">
+                                                <button class="mx-2 btn btn-outline-dark flex-shrink-0" type="submit" name="plus">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                                 <button class="btn btn-outline-dark flex-shrink-0" type="submit" name="minus">
@@ -255,10 +282,11 @@ print_r($_SESSION);
                                                 </button>
                                                 <br>
                                             </form>
-                                            <p class="fs-5 text mt-3">₱ <?=htmlspecialchars(number_format($product['Price'], 2))?></p>
+                                            <p class="fs-5 text mt-3">₱ <?=htmlspecialchars(number_format($product['Price'], 2))?> each X <?=htmlspecialchars($userCart['Quantity'])?></p>
+                                            <p class="fs-5 text mt-3">Total ₱ <?=htmlspecialchars(number_format(calculateTotalPrice($product['Price'], $userCart['Quantity']), 2));?></p>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <hr>    
 
                                     <?php
                                 } else {

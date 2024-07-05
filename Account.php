@@ -158,7 +158,7 @@ require_once('DB.php');
         $userID = $_SESSION['UserID'];
         
         try {
-            $stmt = $conn->prepare("SELECT * FROM carts WHERE UserID = :userID");
+            $stmt = $conn->prepare("SELECT * FROM carts WHERE UserID = :userID ORDER BY CartID");
             $stmt->bindParam(':userID', $userID);
             $stmt->execute();
             $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -306,9 +306,79 @@ require_once('DB.php');
             return 0; // Return 0 on error
         }
     }
-
-
+    function updateCart($UserID, $ProductID, $Quantity) {
+        try {
+            $conn = dbconn();
+            
+            $stmt = $conn->prepare("
+            UPDATE carts
+            SET
+                ProductID = :ProductID,
+                Quantity = :Quantity + 1
+            WHERE
+                UserID = :UserID
+            ");
+            $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
+            $stmt->bindParam(':Quantity', $Quantity, PDO::PARAM_INT);
+            $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
+            $stmt->execute();
     
+            // Close the connection
+            $conn = null;
+            echo "Updated Successfully!";
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+    function minusItemFromCart($UserID, $ProductID, $Quantity) {
+        try {
+            $conn = dbconn();
+            
+            $stmt = $conn->prepare("
+            UPDATE carts
+            SET
+                ProductID = :ProductID,
+                Quantity = :Quantity - 1
+            WHERE
+                UserID = :UserID
+            ");
+            $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
+            $stmt->bindParam(':Quantity', $Quantity, PDO::PARAM_INT);
+            $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
+            $stmt->execute();
+    
+            // Close the connection
+            $conn = null;
+            echo "Updated Successfully!";
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
+    function deleteItemFromCart($UserID, $ProductID) {
+    try {
+        $conn = dbconn();
+        
+        // Prepare the DELETE statement with the condition
+        $stmt = $conn->prepare("
+            DELETE FROM carts
+            WHERE UserID = :UserID AND ProductID = :ProductID AND Quantity < 1
+        ");
+        $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
+        $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
+        $stmt->execute();
 
+        // Check if any rows were affected
+        $rowsAffected = $stmt->rowCount();
+        if ($rowsAffected > 0) {
+            echo "Deleted Successfully because Quantity was less than 1!";
+        } else {
+            echo "No items deleted because Quantity was not less than 1 or item not found.";
+        }
 
+        // Close the connection
+        $conn = null;
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+}
 ?>
