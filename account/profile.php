@@ -2,13 +2,30 @@
 <?php
 // Require
 require_once '../Header.php';
-
 require('../components/Navbar.php');
-
-// require('../functions/Account.php')  
-// require('../../components/Header.php');
 session_start();
 $user = getAccountDetails($_SESSION["email"]);
+
+print_r($_SESSION);
+print_r($_POST);
+print_r($_SESSION);
+
+
+    function calculateTotalAmount($cartItems) {
+        $totalAmount = 0;
+        foreach ($cartItems as $item) {
+            $product = getSpecificProductbyID($item['ProductID']);
+            if ($product) {
+                $totalAmount += $product['Price'] * $item['Quantity'];
+            }
+        }
+        return $totalAmount;
+    }
+
+    if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["plus"])){
+        echo $_POST["plus"];
+
+    }
 ?>
 
 <?=HeaderStatic($user["FirstName"] . " - Profile")?>
@@ -206,9 +223,10 @@ $user = getAccountDetails($_SESSION["email"]);
                 <div class="container">
                     <h1>My Account</h1>
                     <hr>
-                    <h5>My Cart</h5>
+                    <h5>My Cart (<?= getCartCount() ?>)</h5>
                     <?php
                         $userCarts = getCart();
+                        $totalAmount = calculateTotalAmount($userCarts);
                         if (!empty($userCarts)) {
                             foreach ($userCarts as $userCart) {
                                 $product = getSpecificProductbyID($userCart['ProductID']);
@@ -225,17 +243,19 @@ $user = getAccountDetails($_SESSION["email"]);
                                             <p class="fs-4 text fw-bold"> <?=htmlspecialchars($product['ProductTitle'])?></p>
                                             <p class="fs-5 text">Quantity : <?=htmlspecialchars($userCart['Quantity'])?></p>
 
-                                            <form class="d-flex text-end" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-                                            <input type="hidden" name="productID" value="<?=htmlspecialchars($userCart['ProductID'])?>">
-                                            <input type="hidden" name="userID" value="<?=htmlspecialchars($_SESSION['UserID'])?>">
-                                            <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="quantity" value="<?=htmlspecialchars($userCart['Quantity'])?>">
-                                            <button class="mx-2 btn btn-outline-dark flex-shrink-0" type="submit" name="add_Cart">
-                                                <i class="fa-solid fa-plus"></i>
-                                            </button>
-                                            <button class="btn btn-outline-dark flex-shrink-0" type="submit" name="add_Cart">
-                                                <i class="fa-solid fa-minus"></i>
-                                            </button>
-                                        </form>
+                                            <form class="d-flex justify-content-end" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+                                                <input type="hidden" name="productID" value="<?=htmlspecialchars($userCart['ProductID'])?>">
+                                                <input type="hidden" name="userID" value="<?=htmlspecialchars($_SESSION['UserID'])?>">
+                                                <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="quantity" value="<?=htmlspecialchars($userCart['Quantity'])?>">
+                                                <button class="mx-2 btn btn-outline-dark flex-shrink-0" type="submit" name="plus" value="PLUS <?=htmlspecialchars($userCart['ProductID'])?>">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                                <button class="btn btn-outline-dark flex-shrink-0" type="submit" name="minus">
+                                                    <i class="fa-solid fa-minus"></i>
+                                                </button>
+                                                <br>
+                                            </form>
+                                            <p class="fs-5 text mt-3">₱ <?=htmlspecialchars(number_format($product['Price'], 2))?></p>
                                         </div>
                                     </div>
                                     <hr>
@@ -257,6 +277,10 @@ $user = getAccountDetails($_SESSION["email"]);
                     <?php
                         }
                     ?>
+                    <div class="text-end d-flex align-items-center justify-content-end">
+                        <h2 class="text-end">Total</h2>
+                        <input class="text-end fs-3 text" id="totalAmount" style="border:none;background-color:transparent;" type="num" value="₱ <?= number_format($totalAmount, 2) ?>" name="totalAmount" disabled>
+                    </div>
                     <hr>
                     <div>
                         <h5>Purchase History</h5>
@@ -320,23 +344,20 @@ $user = getAccountDetails($_SESSION["email"]);
         
     
         <?php
+        
         include '../components/Footer.php';
         ?>
 
-        <script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
             const myModal = document.getElementById('myModal')
             const myInput = document.getElementById('myInput')
 
             myModal.addEventListener('shown.bs.modal', () => {
             myInput.focus()
             })
-        </script>
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
-<script>
 
         function productAlertSuccess(res) {
             const alert = document.querySelector("#alert-success-product");

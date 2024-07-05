@@ -120,7 +120,7 @@ if (empty($_SESSION["logged_in"])) {
                                     <!-- Product name-->
                                     <div class="d-flex justify-content-between flex-column align-items-center">
                                         <h5 class="fw-bolder text-start"><?php echo $product['ProductTitle']; ?></h5>
-                                        <span>₱ <?php echo $product['Price']; ?></span>
+                                        <span>₱ <?php echo htmlspecialchars(number_format($product['Price'], 2)); ?></span>
                                     </div>
                                     <hr>
                                     <p class="text-end" style="font-size: 12px!important;margin-top:-13px;">Available Stock (<?php echo $product['Stock']; ?>)</p>
