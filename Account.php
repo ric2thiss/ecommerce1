@@ -515,6 +515,43 @@ require_once('DB.php');
             echo "Error: " . $e->getMessage();
         }
     }
+    function fetching_orders_for_admin_page() {
+        $conn = dbconn(); 
+        
+        try {
+            $stmt = $conn->prepare("
+                SELECT o.*, p.ProductTitle, u.FirstName
+                FROM orders o
+                LEFT JOIN product p ON p.ProductID = o.ProductID
+                LEFT JOIN users u ON u.UserID = o.UserID
+            ");
+            $stmt->execute();
+            $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $orders;
+        } catch (PDOException $e) {
+            // Log the error instead of echoing
+            error_log("Database Error: " . $e->getMessage());
+            return []; // Return an empty array or handle error as per your application's requirements
+        }
+    }
+    function fetching_transactions_for_admin_page() {
+        $conn = dbconn(); 
+        
+        try {
+            $stmt = $conn->prepare("
+                SELECT * FROM transactions
+            ");
+            $stmt->execute();
+            $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $transactions;
+        } catch (PDOException $e) {
+            // Log the error instead of echoing
+            error_log("Database Error: " . $e->getMessage());
+            return []; // Return an empty array or handle error as per your application's requirements
+        }
+    }
+    
+    
     
     function fetching_orders() {
         $conn = dbconn();

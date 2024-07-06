@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare('INSERT INTO product (ProductTitle, ProductDescription, Price, Stock, ProductImage) VALUES (?, ?, ?, ?, ?)');
         $stmt->execute([$title, $description, $price, $stock, $targetFile]);
 
-        echo "Product added successfully! <i style='font-size: 1rem;' class='fa-solid fa-circle-check'></i>";
+        echo "<p>Product added successfully!<i style='font-size: 1rem;' class='fa-solid fa-circle-check'></i></p>";
     } catch (PDOException $e) {
         echo "Database Error: " . $e->getMessage();
     }

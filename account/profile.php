@@ -37,14 +37,20 @@
             }
             #alert-success-product {
             display: none;
-            padding: 10px;
-            background-color: white;
-            color: black;
-            z-index: 9999999;
-            right: 2rem;
             position: fixed;
-            top: 1rem;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%);
+            padding: 15px;
+            background-color: #5cb85c; /* Green background color */
+            color: white; /* White text color */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Box shadow for depth */
+            z-index: 9999; /* Higher z-index to ensure it's above other content */
+            text-align: center; /* Center text */
+            max-width: 300px; /* Optional: Adjust maximum width */
             }
+
             #alert-success-product.show {
                 display: block;
             }
@@ -158,47 +164,81 @@
 
 
                     <div class="container mt-5 mb-5" id="dynamic-container">
+                        <hr>
                         <h4>Orders</h4>
-                        <table class="table">
+                        <hr>
+                        <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                <th scope="col">OrderID</th>
-                                <th scope="col">Product</th>
-                                <th scope="col">Qty.</th>
-                                <th scope="col">Order Date</th>
+                                    <th scope="col">OrderID</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Account ID</th>
+                                    <th scope="col">Buyer</th>
+                                    <th scope="col">Qty.</th>
+                                    <th scope="col">Order Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                $fetch = fetching_orders();
-                                foreach ($fetch as $fetched) {
-                                    $product = getSpecificProductbyID($fetched["ProductID"]);
+                                $orders = fetching_orders_for_admin_page();
+                                foreach ($orders as $order) {
+                                    // Assuming you have a function to get the product name by its ID
+                                    $product = getSpecificProductbyID($order['ProductID']);
+                                    $buyer = $order['FirstName']; // Assuming you want to display the buyer's first name
+
                                     echo "<tr>";
-                                    echo "<td>" . $fetched['OrderID'] . "</td>";
-                                    echo "<td>" . $product["ProductTitle"] . "</td>";
-                                    echo "<td>" . $fetched['qty'] . "</td>";
-                                    echo "<td>" . $fetched['order_date'] . "</td>";
+                                    echo "<td>" . $order['OrderID'] . "</td>";
+                                    echo "<td>" . $product['ProductTitle'] . "</td>";
+                                    echo "<td>" . $order['UserID'] . "</td>"; 
+                                    echo "<td>" . $buyer . "</td>"; 
+                                    echo "<td>" . $order['Quantity'] . "</td>";
+                                    echo "<td>" . $order['OrderDate'] . "</td>";
                                     echo "</tr>";
-                                    }
-                                    ?>
+                                }
+                                ?>
                             </tbody>
                         </table>
+
                     </div>
-                    <div class="container " style="display:flex;justify-content:center; gap:1rem;">
-                        <div class="container border" >
-                            <h5>Tickets</h5>
-                        </div>
-                        <div class="container border" >
-                            <h5>Product Trend</h5>
-                            <?php
-                                $result = getHighestCartCount();
-                                $product_name = getSpecificProductbyID($result['productID']);
-                                if ($result) {
-                                    echo "Product with the highest cart count : <strong>" . $product_name['ProductTitle'] . "</strong, Count: <strong>". " With " . $result['cart_count'] . " count </strong>";
-                                } else {
-                                    echo "No products found in carts or error occurred.";
-                                }
-                            ?>
+                    <div class="container">
+                    <hr>
+                        <div>
+                            <h5>Transactions</h5>
+                            <hr>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">OrderID</th>
+                                        <th scope="col">Payment ID</th>
+                                        <th scope="col">Account ID</th>
+                                        <th scope="col">Payer Name</th>
+                                        <th scope="col">Payer Email</th>
+                                        <th scope="col">Payment Status</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Currency</th>
+                                        <th scope="col">Transaction Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $transactions = fetching_transactions_for_admin_page();
+                                    foreach ($transactions as $transaction) {
+                                        echo "<tr>";
+                                        echo "<td>" . $transaction['order_id'] . "</td>";
+                                        echo "<td>" . $transaction['payer_id'] . "</td>"; 
+                                        echo "<td>" . $transaction["user_id"] . "</td>";
+                                        echo "<td>" . $transaction["payer_name"] . "</td>";
+                                        echo "<td>" . $transaction['payer_email'] . "</td>";
+                                        echo "<td>" . $transaction['status'] . "</td>";
+                                        echo "<td>$" . $transaction['amount'] . "</td>"; // Assuming amount is numeric
+                                        echo "<td>" . $transaction['currency'] . "</td>";
+                                        echo "<td>" . $transaction['transaction_date'] . "</td>";
+                                        echo "</tr>";
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+
                         </div>
 
                     </div>
@@ -384,51 +424,48 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 <script>
-            const myModal = document.getElementById('myModal')
-            const myInput = document.getElementById('myInput')
+    $(document).ready(function() {
+        const exampleModal = document.getElementById('exampleModal');
+        const myInput = document.getElementById('productTitle'); // Assuming productTitle is the input to focus on
 
-            myModal.addEventListener('shown.bs.modal', () => {
-            myInput.focus()
-            })
+        exampleModal.addEventListener('shown.bs.modal', () => {
+            myInput.focus();
+        });
 
         function productAlertSuccess(res) {
             const alert = document.querySelector("#alert-success-product");
-            const exampleModal = document.querySelector("#exampleModal");
-            alert.textContent = res;
+            alert.innerHTML = res;
             alert.classList.add("show");
             setTimeout(() => {
                 alert.classList.remove("show");
-                exampleModal.style.display = "none";
-                window.location = "./profile.php";
-            }, 1500);
+                $('#exampleModal').modal('hide'); // Hide the modal using jQuery
+                window.location.href = "./profile.php"; // Redirect to profile page after success
+            }, 3000);
         }
-$(document).ready(function() {
-    $('#addProductBtn').on('click', function() {
-        var formData = new FormData();
-        formData.append('title', $('#productTitle').val());
-        formData.append('description', $('#productDescription').val());
-        formData.append('price', $('#productPrice').val());
-        formData.append('stock', $('#floatingStock').val());
-        formData.append('image', $('#productImage')[0].files[0]);
 
-        $.ajax({
-            url: 'add_product.php',
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                // alert(response);
-                // Optionally close the modal after successful submission
-                // $('#exampleModal').modal('hide');
-                productAlertSuccess(response);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Error: ' + textStatus, errorThrown);
-            }
+        $('#addProductBtn').on('click', function() {
+            var formData = new FormData();
+            formData.append('title', $('#productTitle').val());
+            formData.append('description', $('#productDescription').val());
+            formData.append('price', $('#productPrice').val());
+            formData.append('stock', $('#floatingStock').val());
+            formData.append('image', $('#productImage')[0].files[0]);
+
+            $.ajax({
+                url: 'add_product.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    productAlertSuccess(response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error: ' + textStatus, errorThrown);
+                }
+            });
         });
     });
-});
 </script>
     </body>
 </html>
