@@ -219,25 +219,25 @@ require_once('DB.php');
         $userID = $_SESSION['UserID']; 
         
         try {
-            // Prepare the SQL statement
+    
             $stmt = $conn->prepare("DELETE FROM carts WHERE UserID = :userID");
             
             // Bind parameters
-            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT); // Assuming UserID is an integer
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT); 
             
-            // Execute the statement
+    
             $stmt->execute();
     
-            // Check if any rows were affected
+       
             $rowCount = $stmt->rowCount();
             
-            // Return true if deletion was successful and at least one row was affected
+
             return $rowCount > 0;
         } catch (PDOException $e) {
             // Log the error
             error_log("Database Error: " . $e->getMessage());
             
-            // Return an error message
+
             return ['status' => 'error', 'message' => 'Failed to delete items from cart.'];
         }
     }
@@ -278,7 +278,7 @@ require_once('DB.php');
         $conn = dbconn();
         
         try {
-            $stmt = $conn->prepare("SELECT ProductTitle, Price, ProductImage, ProductDescription FROM product WHERE ProductID = :productID");
+            $stmt = $conn->prepare("SELECT * FROM product WHERE ProductID = :productID");
             $stmt->bindParam(':productID', $productID);
             $stmt->execute();
             $product = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -288,6 +288,22 @@ require_once('DB.php');
             return null;
         }
     }
+    function deleteSpecificProductbyID($productID) {
+        $conn = dbconn();
+        
+        try {
+            $stmt = $conn->prepare("DELETE FROM product WHERE ProductID = :productID");
+            $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
+            $stmt->execute();
+
+            
+            return true; 
+        } catch (PDOException $e) {
+            error_log("Database Error: " . $e->getMessage());
+            return false; 
+        }
+    }
+    
 
     function getHighestCartCount() {
         $conn = dbconn();
@@ -378,17 +394,17 @@ require_once('DB.php');
             return $result['user_count'];
         } catch (PDOException $e) {
             error_log("Database Error: " . $e->getMessage());
-            return 0; // Return 0 on error
+            return 0; 
         }
     }
     function updateCart($UserID, $ProductID) {
         try {
             $conn = dbconn();
             
-            // Begin transaction
+
             $conn->beginTransaction();
     
-            // Increment quantity by 1
+    
             $stmt = $conn->prepare("
                 UPDATE carts
                 SET Quantity = Quantity + 1
@@ -398,7 +414,7 @@ require_once('DB.php');
             $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
             $stmt->execute();
     
-            // Get the updated quantity and price
+      
             $stmt = $conn->prepare("
                 SELECT Quantity, Price
                 FROM carts
@@ -415,7 +431,7 @@ require_once('DB.php');
                 $price = $result['Price'];
                 $totalPrice = $price * $quantity;
     
-                // Update the total price in the cart
+ 
                 $stmt = $conn->prepare("
                     UPDATE carts
                     SET TotalPrice = :TotalPrice
@@ -426,7 +442,7 @@ require_once('DB.php');
                 $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
                 $stmt->execute();
     
-                // Commit transaction
+   
                 $conn->commit();
     
                 echo "Updated Successfully!";
@@ -434,10 +450,10 @@ require_once('DB.php');
                 echo "No matching record found!";
             }
     
-            // Close the connection
+        
             $conn = null;
         } catch (PDOException $e) {
-            // Rollback transaction in case of error
+     
             if ($conn) {
                 $conn->rollBack();
             }
@@ -449,10 +465,10 @@ require_once('DB.php');
         try {
             $conn = dbconn();
             
-            // Start transaction
+           
             $conn->beginTransaction();
             
-            // Update the quantity
+           
             $stmt = $conn->prepare("
                 UPDATE carts
                 SET Quantity = Quantity - 1
@@ -462,7 +478,7 @@ require_once('DB.php');
             $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
             $stmt->execute();
             
-            // Check the new quantity and get the price
+            
             $stmt = $conn->prepare("
                 SELECT Quantity, Price
                 FROM carts
@@ -476,7 +492,7 @@ require_once('DB.php');
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($result['Quantity'] < 1) {
-                // Delete the item if quantity is less than 1
+                
                 $stmt = $conn->prepare("
                     DELETE FROM carts
                     WHERE UserID = :UserID AND ProductID = :ProductID
@@ -485,10 +501,10 @@ require_once('DB.php');
                 $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
                 $stmt->execute();
             } else {
-                // Calculate the new total price
+               
                 $totalPrice = $result['Price'] * $result['Quantity'];
                 
-                // Update the total price in the cart
+        
                 $stmt = $conn->prepare("
                     UPDATE carts
                     SET TotalPrice = :TotalPrice
@@ -500,15 +516,15 @@ require_once('DB.php');
                 $stmt->execute();
             }
     
-            // Commit transaction
+       
             $conn->commit();
             
-            // Close the connection
+     
             $conn = null;
     
             echo "Updated Successfully!";
         } catch (PDOException $e) {
-            // Rollback transaction in case of error
+           
             if ($conn) {
                 $conn->rollBack();
             }
@@ -529,9 +545,9 @@ require_once('DB.php');
             $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $orders;
         } catch (PDOException $e) {
-            // Log the error instead of echoing
+       
             error_log("Database Error: " . $e->getMessage());
-            return []; // Return an empty array or handle error as per your application's requirements
+            return []; 
         }
     }
     function fetching_transactions_for_admin_page() {
@@ -545,9 +561,8 @@ require_once('DB.php');
             $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $transactions;
         } catch (PDOException $e) {
-            // Log the error instead of echoing
             error_log("Database Error: " . $e->getMessage());
-            return []; // Return an empty array or handle error as per your application's requirements
+            return []; 
         }
     }
     
@@ -563,31 +578,24 @@ require_once('DB.php');
             $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $orders;
         } catch (PDOException $e) {
-            // Log the error instead of echoing
+
             error_log("Database Error: " . $e->getMessage());
-            return []; // Return an empty array or handle error as per your application's requirements
+            return []; 
         }
     }    
     function getAllSuccessTransactionsOfThisID($userID) {
-        // Establish database connection
         $conn = dbconn();
     
         try {
-            // Prepare SQL statement to fetch successful transactions
             $stmt = $conn->prepare("SELECT * FROM transactions WHERE UserID = :userID AND status = 'success'");
             $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
             
-            // Execute query
             $stmt->execute();
-    
-            // Fetch all rows as an associative array
+ 
             $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    
-            // Return fetched transactions
             return $transactions;
         } catch (PDOException $e) {
-            // Handle database errors
             error_log("Database Error: " . $e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to fetch or save transactions.'];
         }
@@ -596,39 +604,34 @@ require_once('DB.php');
     function saveCartItemsToOrders($userID) {
         $conn = dbconn();
         try {
-            // Start a transaction
+
             $conn->beginTransaction();
-    
-            // Fetch cart items for the user
+
             $stmt = $conn->prepare("SELECT * FROM carts WHERE UserID = :userID AND Quantity >= 1 ORDER BY CartID ASC");
             $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
             $stmt->execute();
             $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-            // Insert each cart item into 'orders' table
+  
             foreach ($cartItems as $item) {
-                $orderDate = date('Y-m-d H:i:s'); // Example order date (current datetime)
-    
-                // Prepare the insert statement
+                $orderDate = date('Y-m-d H:i:s'); 
                 $stmt = $conn->prepare("INSERT INTO orders (UserID, ProductID, Quantity, OrderDate) VALUES (:userID, :productID, :quantity, :orderDate)");
                 $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
                 $stmt->bindParam(':productID', $item['ProductID'], PDO::PARAM_INT);
                 $stmt->bindParam(':quantity', $item['Quantity'], PDO::PARAM_INT);
                 $stmt->bindParam(':orderDate', $orderDate);
-    
-                // Execute the insert statement
+
                 $stmt->execute();
             }
     
-            // Commit the transaction
             $conn->commit();
     
-            return true; // Return true indicating success
+            return true; 
         } catch (PDOException $e) {
-            // Rollback the transaction on error
+           
             $conn->rollback();
             error_log("Database Error: " . $e->getMessage());
-            return false; // Return false indicating failure
+            return false; 
         }
     }
 
@@ -643,12 +646,12 @@ require_once('DB.php');
             if ($result && isset($result['orderCount'])) {
                 return $result['orderCount'];
             } else {
-                return 0; // Return 0 if no orders found
+                return 0; 
             }
         } catch (PDOException $e) {
-            // Log the error instead of echoing
+            
             error_log("Database Error: " . $e->getMessage());
-            return 0; // Return 0 on error
+            return 0; 
         }
     }
     function compute_total_amount_from_transactions() {
@@ -660,15 +663,12 @@ require_once('DB.php');
             ");
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-            // Extract the total amount from the result
             $total_amount = $result['total_amount'];
     
             return $total_amount;
         } catch (PDOException $e) {
-            // Log the error instead of echoing
             error_log("Database Error: " . $e->getMessage());
-            return 0; // Return a default value or handle error as per your application's requirements
+            return 0;
         }
     }
     

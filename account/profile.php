@@ -38,17 +38,17 @@
             #alert-success-product {
             display: none;
             position: fixed;
-            top: 50%; /* Center vertically */
-            left: 50%; /* Center horizontally */
+            top: 50%; 
+            left: 50%; 
             transform: translate(-50%, -50%);
             padding: 15px;
-            background-color: #5cb85c; /* Green background color */
-            color: white; /* White text color */
+            background-color: #5cb85c;
+            color: white; 
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Box shadow for depth */
-            z-index: 9999; /* Higher z-index to ensure it's above other content */
-            text-align: center; /* Center text */
-            max-width: 300px; /* Optional: Adjust maximum width */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+            z-index: 9999;
+            text-align: center; 
+            max-width: 300px; 
             }
 
             #alert-success-product.show {
@@ -88,6 +88,10 @@
                     <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Add Product
                     </button>
+                    /
+                    <a href="product_list.php" class="btn btn-default">
+                        View Products
+                    </a>
                 </div>
                     <div class="container mb-5 mt-5" style="display:flex;justify-content:center; gap:.8rem;">
                             <div class="col-xl-4 col-md-6">
