@@ -145,9 +145,22 @@ if (empty($_SESSION["logged_in"])) {
                                     <input type="hidden" name="productID" value="<?php echo $product['ProductID']; ?>">
                                     <input type="hidden" name="userID" value="<?php echo $_SESSION['UserID']; ?>">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button class="btn btn-outline-dark mt-auto" type="submit">
-                                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                                    </button>
+                                    <?php
+                                        if(!$product['Stock']){
+                                            ?>
+                                            <button class="btn btn-outline-dark mt-auto" disabled>
+                                                <i class="fa-solid fa-cart-plus"></i> No Stock
+                                            </button>
+                                            <?php
+                                        }else{
+                                            ?>
+                                            <button class="btn btn-outline-dark mt-auto" type="submit">
+                                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                            </button>
+                                            <?php
+                                        }
+                                    ?>
+                                    
                                 </form>
                             </div>
                         </div>
