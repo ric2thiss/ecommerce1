@@ -39,7 +39,7 @@ require_once('DB.php');
                 echo "
                 <script>
                 setTimeout(function() {
-                    window.location.href = '../login.php'; // Redirect to login page
+                    window.location.href = './login.php'; // Redirect to login page
                 }, 3000); // 3000 milliseconds = 3 seconds
                 </script>";
             } else {
@@ -140,25 +140,64 @@ require_once('DB.php');
         $quantity = $_POST['quantity'];
         
         try {
-            $stmt = $conn->prepare("INSERT INTO carts (ProductID, UserID, Quantity)
-                                    VALUES (:productID, :userID, :quantity)");
-            $stmt->bindParam(':productID', $productID);
-            $stmt->bindParam(':userID', $userID);
-            $stmt->bindParam(':quantity', $quantity);
+            // Fetch the product price
+            $stmt = $conn->prepare("SELECT Price FROM product WHERE ProductID = :productID");
+            $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
             $stmt->execute();
+            $product = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$product) {
+                throw new Exception("Product not found.");
+            }
+            
+            $price = $product['Price'];
+            $totalPrice = $price * $quantity;
+            
+            // Check if the product already exists in the cart
+            $stmt = $conn->prepare("SELECT * FROM carts WHERE ProductID = :productID AND UserID = :userID");
+            $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($row) {
+                // Product already exists, update the quantity and total price
+                $newQuantity = $row['Quantity'] + $quantity;
+                $newTotalPrice = $price * $newQuantity;
+                
+                $updateStmt = $conn->prepare("UPDATE carts SET Quantity = :newQuantity, TotalPrice = :newTotalPrice WHERE ProductID = :productID AND UserID = :userID");
+                $updateStmt->bindParam(':newQuantity', $newQuantity, PDO::PARAM_INT);
+                $updateStmt->bindParam(':newTotalPrice', $newTotalPrice, PDO::PARAM_STR);
+                $updateStmt->bindParam(':productID', $productID, PDO::PARAM_INT);
+                $updateStmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+                $updateStmt->execute();
+            } else {
+                // Product doesn't exist, insert new record
+                $insertStmt = $conn->prepare("INSERT INTO carts (ProductID, UserID, Quantity, TotalPrice) VALUES (:productID, :userID, :quantity, :totalPrice)");
+                $insertStmt->bindParam(':productID', $productID, PDO::PARAM_INT);
+                $insertStmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+                $insertStmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
+                $insertStmt->bindParam(':totalPrice', $totalPrice, PDO::PARAM_STR);
+                $insertStmt->execute();
+            }
+            
             return true;
         } catch (PDOException $e) {
             error_log("Database Error: " . $e->getMessage());
             return false;
+        } catch (Exception $e) {
+            error_log("Error: " . $e->getMessage());
+            return false;
         }
-    }
+    }    
     
     function getCart() {
         $conn = dbconn();
         $userID = $_SESSION['UserID'];
         
         try {
-            $stmt = $conn->prepare("SELECT * FROM carts WHERE UserID = :userID AND Quantity >=1 ORDER BY CartID DESC");
+            $stmt = $conn->prepare("SELECT * FROM carts WHERE UserID = :userID AND Quantity >=1 ORDER BY CartID ASC");
             $stmt->bindParam(':userID', $userID);
             $stmt->execute();
             $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -168,6 +207,42 @@ require_once('DB.php');
             return null;
         }
     }
+    function deleteAllItemsFromMyCart() {
+        // Establish database connection
+        $conn = dbconn();
+        
+        // Check if userID is set in session
+        if (!isset($_SESSION['UserID'])) {
+            return ['status' => 'error', 'message' => 'User ID not set in session.'];
+        }
+        
+        $userID = $_SESSION['UserID']; 
+        
+        try {
+            // Prepare the SQL statement
+            $stmt = $conn->prepare("DELETE FROM carts WHERE UserID = :userID");
+            
+            // Bind parameters
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT); // Assuming UserID is an integer
+            
+            // Execute the statement
+            $stmt->execute();
+    
+            // Check if any rows were affected
+            $rowCount = $stmt->rowCount();
+            
+            // Return true if deletion was successful and at least one row was affected
+            return $rowCount > 0;
+        } catch (PDOException $e) {
+            // Log the error
+            error_log("Database Error: " . $e->getMessage());
+            
+            // Return an error message
+            return ['status' => 'error', 'message' => 'Failed to delete items from cart.'];
+        }
+    }
+    
+    
     
     function getCartCount() {
         $conn = dbconn();
@@ -306,33 +381,12 @@ require_once('DB.php');
             return 0; // Return 0 on error
         }
     }
-    // function updateCart($UserID, $ProductID, $Quantity) {
-    //     try {
-    //         $conn = dbconn();
-            
-    //         $stmt = $conn->prepare("
-    //         UPDATE carts
-    //         SET
-    //             ProductID = :ProductID,
-    //             Quantity = :Quantity + 1
-    //         WHERE
-    //             UserID = :UserID
-    //         ");
-    //         $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
-    //         $stmt->bindParam(':Quantity', $Quantity, PDO::PARAM_INT);
-    //         $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
-    //         $stmt->execute();
-    
-    //         // Close the connection
-    //         $conn = null;
-    //         echo "Updated Successfully!";
-    //     } catch (PDOException $e) {
-    //         echo "Error: " . $e->getMessage();
-    //     }
-    // }
     function updateCart($UserID, $ProductID) {
         try {
             $conn = dbconn();
+            
+            // Begin transaction
+            $conn->beginTransaction();
     
             // Increment quantity by 1
             $stmt = $conn->prepare("
@@ -344,13 +398,53 @@ require_once('DB.php');
             $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
             $stmt->execute();
     
+            // Get the updated quantity and price
+            $stmt = $conn->prepare("
+                SELECT Quantity, Price
+                FROM carts
+                JOIN product ON carts.ProductID = product.ProductID
+                WHERE UserID = :UserID AND carts.ProductID = :ProductID
+            ");
+            $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
+            $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($result) {
+                $quantity = $result['Quantity'];
+                $price = $result['Price'];
+                $totalPrice = $price * $quantity;
+    
+                // Update the total price in the cart
+                $stmt = $conn->prepare("
+                    UPDATE carts
+                    SET TotalPrice = :TotalPrice
+                    WHERE UserID = :UserID AND ProductID = :ProductID
+                ");
+                $stmt->bindParam(':TotalPrice', $totalPrice, PDO::PARAM_STR);
+                $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
+                $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
+                $stmt->execute();
+    
+                // Commit transaction
+                $conn->commit();
+    
+                echo "Updated Successfully!";
+            } else {
+                echo "No matching record found!";
+            }
+    
             // Close the connection
             $conn = null;
-            echo "Updated Successfully!";
         } catch (PDOException $e) {
+            // Rollback transaction in case of error
+            if ($conn) {
+                $conn->rollBack();
+            }
             echo "Error: " . $e->getMessage();
         }
     }
+    
     function minusItemFromCart($UserID, $ProductID) {
         try {
             $conn = dbconn();
@@ -360,24 +454,20 @@ require_once('DB.php');
             
             // Update the quantity
             $stmt = $conn->prepare("
-            UPDATE carts
-            SET
-                Quantity = Quantity - 1
-            WHERE 
-                UserID = :UserID AND 
-                ProductID = :ProductID
+                UPDATE carts
+                SET Quantity = Quantity - 1
+                WHERE UserID = :UserID AND ProductID = :ProductID
             ");
             $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
             $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
             $stmt->execute();
             
-            // Check the new quantity
+            // Check the new quantity and get the price
             $stmt = $conn->prepare("
-            SELECT Quantity
-            FROM carts
-            WHERE 
-                UserID = :UserID AND 
-                ProductID = :ProductID
+                SELECT Quantity, Price
+                FROM carts
+                JOIN product ON carts.ProductID = product.ProductID
+                WHERE UserID = :UserID AND carts.ProductID = :ProductID
             ");
             $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
             $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
@@ -386,52 +476,46 @@ require_once('DB.php');
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($result['Quantity'] < 1) {
+                // Delete the item if quantity is less than 1
                 $stmt = $conn->prepare("
-                DELETE FROM carts
-                WHERE 
-                    UserID = :UserID AND 
-                    ProductID = :ProductID
+                    DELETE FROM carts
+                    WHERE UserID = :UserID AND ProductID = :ProductID
                 ");
                 $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
                 $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
                 $stmt->execute();
+            } else {
+                // Calculate the new total price
+                $totalPrice = $result['Price'] * $result['Quantity'];
+                
+                // Update the total price in the cart
+                $stmt = $conn->prepare("
+                    UPDATE carts
+                    SET TotalPrice = :TotalPrice
+                    WHERE UserID = :UserID AND ProductID = :ProductID
+                ");
+                $stmt->bindParam(':TotalPrice', $totalPrice, PDO::PARAM_STR);
+                $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
+                $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
+                $stmt->execute();
             }
-            
-
+    
+            // Commit transaction
             $conn->commit();
             
-            // $conn = null;
+            // Close the connection
+            $conn = null;
+    
             echo "Updated Successfully!";
         } catch (PDOException $e) {
-            $conn->rollBack();
+            // Rollback transaction in case of error
+            if ($conn) {
+                $conn->rollBack();
+            }
             echo "Error: " . $e->getMessage();
         }
     }
     
-    // function minusItemFromCart($UserID, $ProductID, $Quantity) {
-    //     try {
-    //         $conn = dbconn();
-            
-    //         $stmt = $conn->prepare("
-    //         UPDATE carts
-    //         SET
-    //             ProductID = :ProductID,
-    //             Quantity = :Quantity - 1
-    //         WHERE
-    //             UserID = :UserID
-    //         ");
-    //         $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
-    //         $stmt->bindParam(':Quantity', $Quantity, PDO::PARAM_INT);
-    //         $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
-    //         $stmt->execute();
-    
-    //         // Close the connection
-    //         $conn = null;
-    //         echo "Updated Successfully!";
-    //     } catch (PDOException $e) {
-    //         echo "Error: " . $e->getMessage();
-    //     }
-    // }
 //     function deleteItemFromCart($UserID, $ProductID) {
 //     try {
 //         $conn = dbconn();

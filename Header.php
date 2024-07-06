@@ -12,6 +12,7 @@
                 <title><?php  echo $pageTitle; ?></title>
                 <!-- Favicon-->
                 <link rel="icon" type="image/x-icon" href="favicon.ico" />
+                <script src="https://www.paypal.com/sdk/js?client-id=AfHWnXnEA1aIBw9L35ZwG7u909qrfMpsLrdik3T7-hCvcYIznjleeIEsXZgxlXjsIqD-VHNj9cY87xgD"></script>
                 <!-- Custom CSS -->
                 <link rel="stylesheet" href="style.css">
                 <!-- Bootstrap icons-->

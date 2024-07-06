@@ -1,16 +1,10 @@
 
 <?php
-// Require
-require_once '../Header.php';
-require('../components/Navbar.php');
-session_start();
-$user = getAccountDetails($_SESSION["email"]);
-
-// echo "SESSION : ";
-// print_r($_SESSION);
-// echo "POST : ";
-// print_r($_POST);
-
+    // Require
+    require_once '../Header.php';
+    require('../components/Navbar.php');
+    session_start();
+    $user = getAccountDetails($_SESSION["email"]);
 
     function calculateTotalAmount($cartItems) {
         $totalAmount = 0;
@@ -25,32 +19,6 @@ $user = getAccountDetails($_SESSION["email"]);
     function calculateTotalPrice($price, $quantity) {
         return $price * $quantity;
     }
-    
-    // if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    //     if (isset($_POST["minus"])) {
-    //         // echo "THIS IS MINUS";
-    //         $id = htmlspecialchars($_POST["p_id"]);
-    //         $qty = intval($_POST["qty"]); // Ensure quantity is an integer
-    //         $uid = htmlspecialchars($_SESSION["UserID"]);
-    //         if ($qty < 1) {
-    //             deleteItemFromCart($uid, $id);
-    //         } else if($qty > 0) {
-    //             minusItemFromCart($uid, $id, $qty);
-    //         }
-    //     } elseif (isset($_POST["plus"])) {
-    //         // echo "THIS IS PLUS";
-    //         $id = htmlspecialchars($_POST["p_id"]);
-    //         $qty = intval($_POST["qty"]); // Ensure quantity is an integer
-    //         $uid = htmlspecialchars($_SESSION["UserID"]);
-    
-    //         if ($qty < 1) {
-    //             deleteItemFromCart($uid, $id);
-    //         } else {
-    //             updateCart($uid, $id, $qty);
-    //         }
-    //     }
-    // }
-    
 ?>
 
 <?=HeaderStatic($user["FirstName"] . " - Profile")?>
@@ -306,21 +274,28 @@ $user = getAccountDetails($_SESSION["email"]);
                     <?php
                         }
                     ?>
-                    <div class="text-end d-flex align-items-center justify-content-end">
-                        <h2 class="text-end">Total</h2>
-                        <input class="text-end fs-3 text" id="totalAmount" style="border:none;background-color:transparent;" type="num" value="₱ <?= number_format($totalAmount, 2) ?>" name="totalAmount" disabled>
+                    <?php
+                       if(!empty($userCarts)){
+                        ?>
+                            <div class="text-end d-flex align-items-center justify-content-end">
+                            <h2 class="text-end">Total</h2>
+                            <form action="summary.php" class="text-end d-flex align-items-center">
+                                <input class="text-end fs-3 text" id="totalAmount" style="border:none;background-color:transparent;" type="num" value="₱ <?= number_format($totalAmount, 2) ?>" name="totalAmount" disabled>
+                                <input type="submit" class="btn btn-default" value="Checkout">
+                            </form>
                     </div>
+                        <?php
+                       }
+
+                    ?>
                     <hr>
-                    <div>
+                    <div class="pb-5">
                         <h5>Purchase History</h5>
                         <br>
                         <h6>You have not made any purchases yet!</h6>
+                        <br>
                     </div>
                 </div>
-
-
-
-
 
                 <?php
             }
