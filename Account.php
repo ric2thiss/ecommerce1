@@ -552,7 +552,6 @@ require_once('DB.php');
     }
     
     
-    
     function fetching_orders() {
         $conn = dbconn();
         $userID = $_SESSION['UserID'];
@@ -652,6 +651,27 @@ require_once('DB.php');
             return 0; // Return 0 on error
         }
     }
+    function compute_total_amount_from_transactions() {
+        $conn = dbconn(); 
+        
+        try {
+            $stmt = $conn->prepare("
+                SELECT SUM(amount) AS total_amount FROM transactions
+            ");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            // Extract the total amount from the result
+            $total_amount = $result['total_amount'];
+    
+            return $total_amount;
+        } catch (PDOException $e) {
+            // Log the error instead of echoing
+            error_log("Database Error: " . $e->getMessage());
+            return 0; // Return a default value or handle error as per your application's requirements
+        }
+    }
+    
     
     
     

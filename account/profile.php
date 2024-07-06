@@ -151,7 +151,7 @@
                             <div class="col-xl-4 col-md-6">
                                 <div class="card mb-4">
                                     <div class="card-body">Sales 
-                                        <h1>0</h1>
+                                        <h1>₱ <?=compute_total_amount_from_transactions()?></h1>
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-dark stretched-link" href="pending-post.php">View</a>
@@ -230,8 +230,8 @@
                                         echo "<td>" . $transaction["payer_name"] . "</td>";
                                         echo "<td>" . $transaction['payer_email'] . "</td>";
                                         echo "<td>" . $transaction['status'] . "</td>";
-                                        echo "<td>$" . $transaction['amount'] . "</td>"; // Assuming amount is numeric
-                                        echo "<td>" . $transaction['currency'] . "</td>";
+                                        echo "<td>₱ " . $transaction['amount'] . "</td>"; 
+                                        echo "<td>" .' PESO '. "</td>";
                                         echo "<td>" . $transaction['transaction_date'] . "</td>";
                                         echo "</tr>";
                                     }
