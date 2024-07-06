@@ -88,6 +88,7 @@ if (!$product) {
                         </div>
                         <div class="mb-3">
                             <label for="formFile" class="form-label">Image</label>
+                            <input type="hidden" name="currentProductImage" value="<?= htmlspecialchars($product["ProductImage"]) ?>">
                             <input class="form-control" type="file" id="formFile" name="productImage">
                         </div>
                         <a href="javascript:history.back()" class="btn btn-outline-dark">Back</a>

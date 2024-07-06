@@ -41,8 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($_FILES['productImage']['error'] == UPLOAD_ERR_OK) {
         move_uploaded_file($_FILES['productImage']['tmp_name'], $uploadDirectory . $productImage);
     } else {
-        header("Location: ../error.php");
-        exit();
+        $targetFile = filter_input(INPUT_POST, 'currentProductImage', FILTER_SANITIZE_STRING);
     }
 
     if ($productID && $productName && $productDescription && $productPrice !== false && $stock !== false) {

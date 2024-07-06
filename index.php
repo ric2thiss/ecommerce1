@@ -79,14 +79,14 @@ if (empty($_SESSION["logged_in"])) {
                             }
                             
                             ?>
-                            <div class="d-flex" id="cartBtn">
-                                <div class="btn btn-outline-dark">
-                                    <i class="bi-cart-fill me-1"></i>
+                            <a href="account/profile.php" class="d-flex text-decoration-none">
+                                <button class="btn btn-outline-dark">
+                                    <i class="bi bi-cart-fill me-1"></i>
                                     Cart
-                                    <span class="badge bg-dark text-white ms-1 rounded-pill"><?=getCartCount()?></span>
-                                </div>
+                                    <span class="badge bg-dark text-white ms-1 rounded-pill"><?= getCartCount() ?></span>
+                                </button>
+                            </a>
 
-                            </div>
                         </div>
                     </div>
                 </nav>
