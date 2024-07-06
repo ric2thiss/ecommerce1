@@ -6,18 +6,16 @@
         header('Location: login.php');
         exit();
     }
+    // Save first the items to orders before deleting to the cart
+    $userID = $_SESSION["UserID"];
 
-    // Attempt to delete all items from the cart
-    $result = deleteAllItemsFromMyCart();
-
-    if ($result === true) {
-        // Successful deletion, redirect to profile page
-        header('Location: profile.php');
+    if(saveCartItemsToOrders($userID)){
+        deleteAllItemsFromMyCart();
+        header("Location: profile.php");
         exit();
-    } else {
-        // Error occurred, handle it accordingly (optional)
-        // For example, you can redirect to an error page or display a message
+    }else {
         header('Location: error.php');
         exit();
     }
+
 ?>

@@ -15,7 +15,7 @@ if ($data) {
     $status = $data['status'];
     $payerName = $data['payerName'];
     $payerEmail = $data['payerEmail'];
-    $userID = $_SESSION['UserID']; // Assuming you store the user ID in the session
+    $userID = $_SESSION['UserID'];
 
     try {
         // Connect to the database

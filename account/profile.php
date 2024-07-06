@@ -98,7 +98,7 @@
                             <div class="col-xl-4 col-md-6">
                                 <div class="card mb-4">
                                     <div class="card-body">Orders 
-                                        <h1>0</h1>
+                                        <h1><?=count_orders()?></h1>
                                     </div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-dark stretched-link" href="pending-post.php">View</a>
@@ -162,30 +162,25 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">First</th>
-                                <th scope="col">Last</th>
-                                <th scope="col">Handle</th>
+                                <th scope="col">OrderID</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Qty.</th>
+                                <th scope="col">Order Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                                </tr>
-                                <tr>
-                                <th scope="row">3</th>
-                                <td colspan="2">Larry the Bird</td>
-                                <td>@twitter</td>
-                                </tr>
+                                <?php
+                                $fetch = fetching_orders();
+                                foreach ($fetch as $fetched) {
+                                    $product = getSpecificProductbyID($fetched["ProductID"]);
+                                    echo "<tr>";
+                                    echo "<td>" . $fetched['OrderID'] . "</td>";
+                                    echo "<td>" . $product["ProductTitle"] . "</td>";
+                                    echo "<td>" . $fetched['qty'] . "</td>";
+                                    echo "<td>" . $fetched['order_date'] . "</td>";
+                                    echo "</tr>";
+                                    }
+                                    ?>
                             </tbody>
                         </table>
                     </div>
@@ -292,7 +287,38 @@
                     <div class="pb-5">
                         <h5>Purchase History</h5>
                         <br>
-                        <h6>You have not made any purchases yet!</h6>
+                        <?php
+                            if(!fetching_orders()){
+                                echo ' <h6>You have not made any purchases yet!</h6>';
+                            }else{
+                                ?>
+                    <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                <th scope="col">OrderID</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Qty.</th>
+                                <th scope="col">Order Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $fetch = fetching_orders();
+                                foreach ($fetch as $fetched) {
+                                    $product = getSpecificProductbyID($fetched["ProductID"]);
+                                    echo "<tr>";
+                                    echo "<td>" . $fetched['OrderID'] . "</td>";
+                                    echo "<td>" . $product["ProductTitle"] . "</td>";
+                                    echo "<td>" . $fetched['Quantity'] . "</td>";
+                                    echo "<td>" . $fetched['OrderDate'] . "</td>";
+                                    echo "</tr>";
+                                    }
+                                    ?>
+                            </tbody>
+                        </table>
+                                <?php
+                            }
+                        ?>
                         <br>
                     </div>
                 </div>

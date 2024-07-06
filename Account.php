@@ -516,31 +516,108 @@ require_once('DB.php');
         }
     }
     
-//     function deleteItemFromCart($UserID, $ProductID) {
-//     try {
-//         $conn = dbconn();
+    function fetching_orders() {
+        $conn = dbconn();
+        $userID = $_SESSION['UserID'];
         
-//         // Prepare the DELETE statement with the condition
-//         $stmt = $conn->prepare("
-//             DELETE FROM carts
-//             WHERE UserID = :UserID AND ProductID = :ProductID AND Quantity < 1
-//         ");
-//         $stmt->bindParam(':UserID', $UserID, PDO::PARAM_INT);
-//         $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
-//         $stmt->execute();
+        try {
+            $stmt = $conn->prepare("SELECT * FROM orders WHERE UserID = :userID");
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+            $stmt->execute();
+            $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $orders;
+        } catch (PDOException $e) {
+            // Log the error instead of echoing
+            error_log("Database Error: " . $e->getMessage());
+            return []; // Return an empty array or handle error as per your application's requirements
+        }
+    }    
+    function getAllSuccessTransactionsOfThisID($userID) {
+        // Establish database connection
+        $conn = dbconn();
+    
+        try {
+            // Prepare SQL statement to fetch successful transactions
+            $stmt = $conn->prepare("SELECT * FROM transactions WHERE UserID = :userID AND status = 'success'");
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+            
+            // Execute query
+            $stmt->execute();
+    
+            // Fetch all rows as an associative array
+            $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-//         // Check if any rows were affected
-//         $rowsAffected = $stmt->rowCount();
-//         if ($rowsAffected > 0) {
-//             // echo "Deleted Successfully because Quantity was less than 1!";
-//         } else {
-//             // echo "No items deleted because Quantity was not less than 1 or item not found.";
-//         }
+    
+            // Return fetched transactions
+            return $transactions;
+        } catch (PDOException $e) {
+            // Handle database errors
+            error_log("Database Error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'Failed to fetch or save transactions.'];
+        }
+    }
+    
+    function saveCartItemsToOrders($userID) {
+        $conn = dbconn();
+        try {
+            // Start a transaction
+            $conn->beginTransaction();
+    
+            // Fetch cart items for the user
+            $stmt = $conn->prepare("SELECT * FROM carts WHERE UserID = :userID AND Quantity >= 1 ORDER BY CartID ASC");
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+            $stmt->execute();
+            $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            // Insert each cart item into 'orders' table
+            foreach ($cartItems as $item) {
+                $orderDate = date('Y-m-d H:i:s'); // Example order date (current datetime)
+    
+                // Prepare the insert statement
+                $stmt = $conn->prepare("INSERT INTO orders (UserID, ProductID, Quantity, OrderDate) VALUES (:userID, :productID, :quantity, :orderDate)");
+                $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+                $stmt->bindParam(':productID', $item['ProductID'], PDO::PARAM_INT);
+                $stmt->bindParam(':quantity', $item['Quantity'], PDO::PARAM_INT);
+                $stmt->bindParam(':orderDate', $orderDate);
+    
+                // Execute the insert statement
+                $stmt->execute();
+            }
+    
+            // Commit the transaction
+            $conn->commit();
+    
+            return true; // Return true indicating success
+        } catch (PDOException $e) {
+            // Rollback the transaction on error
+            $conn->rollback();
+            error_log("Database Error: " . $e->getMessage());
+            return false; // Return false indicating failure
+        }
+    }
 
-//         // Close the connection
-//         $conn = null;
-//     } catch (PDOException $e) {
-//         echo "Error: " . $e->getMessage();
-//     }
-// }
+    function count_orders() {
+        $conn = dbconn();
+        
+        try {
+            $stmt = $conn->prepare("SELECT COUNT(*) as orderCount FROM orders");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($result && isset($result['orderCount'])) {
+                return $result['orderCount'];
+            } else {
+                return 0; // Return 0 if no orders found
+            }
+        } catch (PDOException $e) {
+            // Log the error instead of echoing
+            error_log("Database Error: " . $e->getMessage());
+            return 0; // Return 0 on error
+        }
+    }
+    
+    
+    
+    
+    
 ?>
