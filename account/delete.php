@@ -10,11 +10,12 @@ if (empty($_SESSION["logged_in"])) {
 }
 
 
+// Function to check if the user is an admin
 function isAdmin($user) {
-    return isset($user["Role"]); 
+    return $user["Role"];
 }
 
-
+// Redirect to a different page if the user is not an admin
 function redirectIfNotAdmin($user) {
     if (!isAdmin($user)) {
         header("Location: ../unauthorized.php");
@@ -22,9 +23,10 @@ function redirectIfNotAdmin($user) {
     }
 }
 
-
+// Get user details
 $user = getAccountDetails($_SESSION["email"]);
 
+// Check if the user is an admin
 redirectIfNotAdmin($user);
 
 function sanitizeInput($data) {

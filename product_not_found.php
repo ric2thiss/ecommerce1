@@ -15,7 +15,7 @@ if (empty($_SESSION["logged_in"])) {
 
 ?>
 
-<?=HeaderStatic("Unauthorized")?>
+<?=HeaderStatic("You are lost! Product Not Found")?>
         <style>
             .card:hover{
                 box-shadow: 0px 8px 22px 0px rgba(0,0,0,0.1);
@@ -101,7 +101,7 @@ if (empty($_SESSION["logged_in"])) {
         </div>
         <div class="container pb-5 pt-5">
             <a href="account/profile.php">Go back</a>
-            <h1 class="pb-5 pt-5">You are not authorized to view this page!</h1>
+            <h1 class="pb-5 pt-5">You are lost! Product Not Found</h1>
         </div>
         <?php
         include 'components/Footer.php';

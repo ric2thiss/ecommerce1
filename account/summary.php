@@ -64,7 +64,7 @@ function calculateTotalPrice($price, $quantity) {
                         <div class="d-flex flex-row align-items-center">
                             <h4 class="text-uppercase mt-1">Order Summary</h4>
                         </div>
-                        <a href="index.php">Cancel and return to the Shop</a>
+                        <a href="../index.php">Cancel and return to the Shop</a>
                     </div>
                 <?php
                 foreach ($userCarts as $userCart) {

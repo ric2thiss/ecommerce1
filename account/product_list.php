@@ -6,7 +6,7 @@ session_start();
 
 // Function to check if the user is an admin
 function isAdmin($user) {
-    return isset($user["Role"]);
+    return $user["Role"];
 }
 
 // Redirect to a different page if the user is not an admin

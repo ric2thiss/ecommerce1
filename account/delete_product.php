@@ -26,14 +26,10 @@
 
         $userID = $_SESSION['UserID'];
 
-        // Assuming minusItemFromCart is a function that handles updating the cart
         minusItemFromCart($userID, $productID);
 
         header("Location: profile.php");
         exit();
     }
-
-    // For debugging purposes - remove or comment out in production
-    print_r(htmlspecialchars(print_r($_SESSION, true)));
 
 ?>
