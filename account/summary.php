@@ -168,12 +168,6 @@ function calculateTotalPrice($price, $quantity) {
             }
         ?>
         <hr>
-        <div class="pb-5">
-            <h5>Purchase History</h5>
-            <br>
-            <h6>You have not made any purchases yet!</h6>
-            <br>
-        </div>
     </div>
     <?php include '../components/Footer.php'; ?>
     

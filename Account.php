@@ -664,6 +664,10 @@ require_once('DB.php');
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $total_amount = $result['total_amount'];
+
+            if($total_amount < 1){
+                $total_amount = 0;
+            }
     
             return $total_amount;
         } catch (PDOException $e) {

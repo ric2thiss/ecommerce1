@@ -74,7 +74,7 @@ function calculateTotalPrice($price, $quantity) {
                     <th scope="col">Description</th>
                     <th scope="col">Price</th>
                     <th scope="col">Photo</th>
-                    <th scope="col">Date/Time Uploaded</th>
+                    <th scope="col">Uploaded</th>
                     <th scope="col">Stock</th>
                     <th scope="col">Action</th>
                 </tr>
@@ -87,7 +87,7 @@ function calculateTotalPrice($price, $quantity) {
                     echo "<td>" . $product["ProductID"] . "</td>";
                     echo "<td>" . $product["ProductTitle"] . "</td>";
                     echo "<td>" . $product["ProductDescription"] . "</td>";
-                    echo "<td>" . $product["Price"] . "</td>";
+                    echo "<td>" . "₱ " .number_format($product["Price"],2) . "</td>";
                     echo "<td><img src='". $product["ProductImage"] . "' width='100' height='100'></td>";
                     echo "<td>" . $product["ProductReg"] . "</td>";
                     echo "<td>" . $product["Stock"] . "</td>";
