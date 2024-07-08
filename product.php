@@ -120,9 +120,21 @@ if (!empty($_POST["pID"])) {
                             <input type="hidden" name="productID" value="<?php echo htmlspecialchars($product['ProductID']); ?>">
                             <input type="hidden" name="userID" value="<?php echo htmlspecialchars($_SESSION['UserID']); ?>">
                             <input class="form-control text-center me-3" style="max-width: 3rem" type="hidden" name="quantity" value="1">
-                            <button class="btn btn-outline-dark mt-auto" type="submit" name="add_to_cart">
-                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                            </button>
+                            <?php
+                                if(!$product['Stock']){
+                                    ?>
+                                    <button class="btn btn-outline-dark mt-auto" type="button" name="add_to_cart" disabled>
+                                        <i class="fa-solid fa-cart-plus"></i> No Stock
+                                    </button>
+                                    <?php
+                                }else{
+                                    ?>
+                                    <button class="btn btn-outline-dark mt-auto" type="submit" name="add_to_cart">
+                                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                    <?php
+                                }
+                            ?>
                         </form>
                     </div>
                 </div>
@@ -175,10 +187,23 @@ if (!empty($_POST["pID"])) {
                                     <input type="hidden" name="productID" value="<?php echo htmlspecialchars($relatedProduct['ProductID']); ?>">
                                     <input type="hidden" name="userID" value="<?php echo htmlspecialchars($_SESSION['UserID']); ?>">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button class="btn btn-outline-dark mt-auto" type="submit" name="add_to_cart">
-                                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                                    </button>
+                                    <?php
+                                    if (!$relatedProduct['Stock']) {
+                                        ?>
+                                        <button class="btn btn-outline-dark mt-auto" disabled>
+                                            <i class="fa-solid fa-cart-plus"></i> No Stock
+                                        </button>
+                                        <?php
+                                    } else {
+                                        ?>
+                                        <button class="btn btn-outline-dark mt-auto" type="submit">
+                                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                        </button>
+                                        <?php
+                                    }
+                                    ?>
                                 </form>
+
                             </div>
                         </div>
                     </div>

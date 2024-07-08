@@ -1,25 +1,5 @@
 
 
-<style>
-    .gradient-custom-2 {
-        background: #ee9ca7;  /* fallback for old browsers */
-        background: -webkit-linear-gradient(to right, #FF89A4, #ee9ca7);  /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to right, #FF89A4, #ee9ca7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    }
-
-    @media (min-width: 768px) {
-        .gradient-form {
-            height: 100vh !important;
-        }
-    }
-    @media (min-width: 769px) {
-        .gradient-custom-2 {
-            border-top-right-radius: .3rem;
-            border-bottom-right-radius: .3rem;
-        }
-    }
-</style>
-
 <?php
     include '../Header.php';
 
@@ -33,7 +13,6 @@
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // Validate credentials (example logic, replace with your actual validation)
         if (Validate_Login($email, $password)) {
             $_SESSION['logged_in'] = true;
             $_SESSION['email'] = $email;
@@ -65,6 +44,25 @@
 ?>
 
 <?=HeaderStatic("Ekay's Scents - Log In")?>
+<style>
+    .gradient-custom-2 {
+        background: #ee9ca7;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #FF89A4, #ee9ca7);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #FF89A4, #ee9ca7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+
+    @media (min-width: 768px) {
+        .gradient-form {
+            height: 100vh !important;
+        }
+    }
+    @media (min-width: 769px) {
+        .gradient-custom-2 {
+            border-top-right-radius: .3rem;
+            border-bottom-right-radius: .3rem;
+        }
+    }
+</style>
 
 <section class="h-100 gradient-form" style="background-color: #eee;">
     <div class="container py-5 h-100">
