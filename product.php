@@ -1,5 +1,5 @@
 <?php
-// Start the session at the beginning of the script
+
 session_start();
 
 include "Account.php";
@@ -12,9 +12,9 @@ if (empty($_SESSION["logged_in"])) {
     header("Location: account/login.php");
     exit();
 }
-// Adding cart in specified product
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_Cart'])) {
+    if (isset($_POST['add_Cart']) || isset($_POST['add_to_cart'])) {
         $_productID = $_POST["productID"] ?? '';
         $_userID = $_POST["userID"] ?? '';
         $_quantity = $_POST["quantity"] ?? '';
@@ -22,18 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($_productID) && !empty($_userID) && !empty($_quantity)) {
             addToCart();
         } else {
-            header("Location: index.php");
-            exit();
-        }
-    } elseif (isset($_POST['add_to_cart'])) {
-        $_productID = $_POST["productID"] ?? '';
-        $_userID = $_POST["userID"] ?? '';
-        $_quantity = $_POST["quantity"] ?? '';
-
-        if (!empty($_productID) && !empty($_userID) && !empty($_quantity)) {
-            addToCart();
-        } else {
-            echo "<script>alert('Product is not available or out of stock!')</script>";
+            if (isset($_POST['add_Cart'])) {
+                header("Location: index.php");
+                exit();
+            } else {
+                echo "<script>alert('Product is not available or out of stock!')</script>";
+            }
         }
     }
 }
@@ -69,19 +63,19 @@ if (!empty($_POST["pID"])) {
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
                 </ul>
 
                 <?php
                 if (isset($_SESSION["logged_in"])) {
-                    $firstName = getAccountDetails($_SESSION["email"]);
+                    $accountDetails = getAccountDetails($_SESSION["email"]);
+                    $firstName = $accountDetails["FirstName"];
                 ?>
                     <a href="./account/profile.php" class="mx-2 btn btn-default">
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
                             <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
                         </svg>
-                        <span><?php echo htmlspecialchars($firstName["FirstName"]); ?></span>
+                        <span><?php echo htmlspecialchars($firstName); ?></span>
                     </a>
                     <a href="account/logout.php" class="btn">Logout</a>
                 <?php
@@ -97,13 +91,13 @@ if (!empty($_POST["pID"])) {
                 <?php
                 }
                 ?>
-                <div class="d-flex" id="cartBtn">
+                <a href="account/profile.php" class="d-flex text-decoration-none" id="cartBtn">
                     <div class="btn btn-outline-dark">
                         <i class="bi-cart-fill me-1"></i>
                         Cart
                         <span class="badge bg-dark text-white ms-1 rounded-pill"><?= getCartCount() ?></span>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </nav>
@@ -117,20 +111,17 @@ if (!empty($_POST["pID"])) {
                     <div class="small mb-1">SKU: <?php echo htmlspecialchars($_POST["pID"]); ?></div>
                     <h1 class="display-5 fw-bolder"><?php echo htmlspecialchars($product["ProductTitle"]); ?></h1>
                     <div class="fs-5 mb-5">
-                        <span class="text-decoration-line-through">$ <?php echo htmlspecialchars($product["Price"]); ?></span>
-                        <span>$ <?php echo htmlspecialchars($product["Price"]); ?></span>
+                        <span class="text-decoration-line-through">₱ <?php echo htmlspecialchars(number_format($product["Price"],2)); ?></span>
+                        <span>₱ <?php echo htmlspecialchars(number_format($product["Price"],2)); ?></span>
                     </div>
                     <p class="lead"><?php echo htmlspecialchars($product["ProductDescription"]); ?></p>
                     <div class="d-flex">
-                        <!-- Can you make this add to cart button working without contradicting any other codes? -->
-                        <form class="d-flex" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-
-                            <input type="hidden" name="productID" value="<?php echo htmlspecialchars($relatedProduct['ProductID']); ?>">
+                        <form class="d-flex" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                            <input type="hidden" name="productID" value="<?php echo htmlspecialchars($product['ProductID']); ?>">
                             <input type="hidden" name="userID" value="<?php echo htmlspecialchars($_SESSION['UserID']); ?>">
-                            <input class="form-control text-center me-3"  style="max-width: 3rem" type="num" name="quantity" value="1">
-                            <button class="btn btn-outline-dark flex-shrink-0" type="submit" name="add_Cart">
-                                <i class="bi-cart-fill me-1"></i>
-                                Add to cart
+                            <input class="form-control text-center me-3" style="max-width: 3rem" type="hidden" name="quantity" value="1">
+                            <button class="btn btn-outline-dark mt-auto" type="submit" name="add_to_cart">
+                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
                             </button>
                         </form>
                     </div>
@@ -158,7 +149,8 @@ if (!empty($_POST["pID"])) {
                                     <!-- Product name-->
                                     <div class="d-flex justify-content-between flex-column align-items-center">
                                         <h5 class="fw-bolder text-start"><?php echo htmlspecialchars($relatedProduct['ProductTitle']); ?></h5>
-                                        <span>₱ <?php echo htmlspecialchars($relatedProduct['Price']); ?></span>
+                                        <span>₱ <?php echo htmlspecialchars(number_format( $relatedProduct['Price'], 2 )); ?></span>
+
                                     </div>
                                     <hr>
                                     <p class="text-end" style="font-size: 12px!important;margin-top:-13px;">Available Stock (<?php echo htmlspecialchars($relatedProduct['Stock']); ?>)</p>
@@ -179,7 +171,7 @@ if (!empty($_POST["pID"])) {
                                         <i class="fa-solid fa-arrow-up-right-from-square"></i> View
                                     </button>
                                 </form>
-                                <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+                                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                                     <input type="hidden" name="productID" value="<?php echo htmlspecialchars($relatedProduct['ProductID']); ?>">
                                     <input type="hidden" name="userID" value="<?php echo htmlspecialchars($_SESSION['UserID']); ?>">
                                     <input type="hidden" name="quantity" value="1">
@@ -199,6 +191,7 @@ if (!empty($_POST["pID"])) {
 <?php
 } else {
     header("Location: index.php");
+    exit();
 }
 ?>
 

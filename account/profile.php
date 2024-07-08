@@ -342,28 +342,33 @@
                                 <th scope="col">OrderID</th>
                                 <th scope="col">Product</th>
                                 <th scope="col">Qty.</th>
+                                <th scope="col">Amount Paid</th>
                                 <th scope="col">Order Date</th>
+                                <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                $fetch = fetching_orders();
-                                foreach ($fetch as $fetched) {
-                                    $product = getSpecificProductbyID($fetched["ProductID"]);
-                                    echo "<tr>";
-                                    echo "<td>" . $fetched['OrderID'] . "</td>";
-                                    echo "<td>" . $product["ProductTitle"] . "</td>";
-                                    echo "<td>" . $fetched['Quantity'] . "</td>";
-                                    echo "<td>" . $fetched['OrderDate'] . "</td>";
-                                    echo "</tr>";
+                                    $fetch = fetching_orders();
+                                    foreach ($fetch as $fetched) {
+                                        $product = getSpecificProductbyID($fetched["ProductID"]);
+                                        echo "<tr>";
+                                        echo "<td>" . $fetched['OrderID'] . "</td>";
+                                        echo "<td>" . $product["ProductTitle"] . "</td>";
+                                        echo "<td>" . $fetched['Quantity'] . "</td>";
+                                        echo "<td>" . "₱ " .number_format($fetched['TotalPrice'],2) . "</td>";
+                                        echo "<td>" . $fetched['OrderDate'] . "</td>";
+                                        echo "<td><a href='track_order.php?order_id=" . $fetched['OrderID'] . "' class='text-decoration-none text-dark'>Track Your Order</a></td>";
+                                        echo "</tr>";
                                     }
-                                    ?>
+                                ?>
                             </tbody>
                         </table>
                                 <?php
                             }
                         ?>
                         <br>
+                        
                     </div>
                 </div>
 
@@ -397,7 +402,10 @@
                             <input type="number" class="form-control" id="floatingStock" placeholder="Stock" name="stock">
                             <label for="floatingStock">Stock</label>
                         </div>
-
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="floatingStock" placeholder="Discount" name="productDiscount">
+                            <label for="floatingStock">Discount in Percent</label>
+                        </div>
                         <div class="mb-3">
                             <label for="productImage" class="form-label">Insert Image</label>
                             <input class="form-control form-control-sm" id="productImage" type="file" accept=".jpg, .jpeg, .png">

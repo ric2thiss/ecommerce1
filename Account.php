@@ -615,10 +615,11 @@ require_once('DB.php');
   
             foreach ($cartItems as $item) {
                 $orderDate = date('Y-m-d H:i:s'); 
-                $stmt = $conn->prepare("INSERT INTO orders (UserID, ProductID, Quantity, OrderDate) VALUES (:userID, :productID, :quantity, :orderDate)");
+                $stmt = $conn->prepare("INSERT INTO orders (UserID, ProductID, Quantity, OrderDate, TotalPrice) VALUES (:userID, :productID, :quantity, :orderDate, :totalPrice)");
                 $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
                 $stmt->bindParam(':productID', $item['ProductID'], PDO::PARAM_INT);
                 $stmt->bindParam(':quantity', $item['Quantity'], PDO::PARAM_INT);
+                $stmt->bindParam(':totalPrice', $item['TotalPrice'], PDO::PARAM_INT);
                 $stmt->bindParam(':orderDate', $orderDate);
 
                 $stmt->execute();
