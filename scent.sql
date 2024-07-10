@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 06, 2024 at 10:54 PM
+-- Generation Time: Jul 08, 2024 at 04:06 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,8 +40,8 @@ CREATE TABLE `carts` (
 --
 
 INSERT INTO `carts` (`CartID`, `UserID`, `ProductID`, `Quantity`, `TotalPrice`) VALUES
-(180, 12, 23, 1, 2),
-(185, 12, 22, 1, 120);
+(189, 12, 31, 1, 14),
+(197, 14, 32, 1, 12);
 
 -- --------------------------------------------------------
 
@@ -54,20 +54,18 @@ CREATE TABLE `orders` (
   `UserID` int(11) NOT NULL,
   `ProductID` int(11) NOT NULL,
   `Quantity` int(11) NOT NULL,
-  `OrderDate` datetime NOT NULL
+  `OrderDate` datetime NOT NULL,
+  `TotalPrice` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`OrderID`, `UserID`, `ProductID`, `Quantity`, `OrderDate`) VALUES
-(1, 18, 23, 1, '2024-07-06 17:14:49'),
-(2, 18, 23, 1, '2024-07-06 17:35:08'),
-(7, 18, 25, 1, '2024-07-06 19:43:31'),
-(8, 14, 25, 2, '2024-07-06 22:41:15'),
-(9, 14, 23, 1, '2024-07-06 22:41:15'),
-(10, 18, 22, 1, '2024-07-06 22:47:31');
+INSERT INTO `orders` (`OrderID`, `UserID`, `ProductID`, `Quantity`, `OrderDate`, `TotalPrice`) VALUES
+(12, 14, 31, 1, '2024-07-07 20:10:31', 14),
+(13, 14, 32, 1, '2024-07-08 01:56:02', 12),
+(14, 14, 31, 1, '2024-07-08 01:56:02', 14);
 
 -- --------------------------------------------------------
 
@@ -91,12 +89,8 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`ProductID`, `ProductTitle`, `ProductDescription`, `Price`, `ProductImage`, `ProductDiscount`, `ProductReg`, `Stock`) VALUES
-(22, 'Lorem IpsumLorem Ipsum', 'Lorem IpsumLorem IpsumLorem Ipsum', 120, 'uploads/Screenshot 2023-05-16 195458.png', 0, '2024-07-06 20:46:04', 1),
-(23, 'Lorem IpsumLorem Ipsum', 'Lorem IpsumLorem IpsumLorem Ipsum', 2, 'uploads/Screenshot 2023-05-16 195458.png', 0, '2024-07-06 13:36:25', 12),
-(24, 'Penshoppe Love Story For Men (4 X 70ml)', 'CHAT WITH US TO CONFIRM STOCK AVAILABILITY EXPIRATION DATE: FEB 1 2023 Fruity Body spray for men Perfect pair of long-lasting scents At affordable price Get it now!', 579, 'uploads/perfume-bottle-dox7ee1-600.jpg', 0, '2024-07-06 19:21:43', 1),
-(25, 'test product', 'test description', 1, 'uploads/Screenshot 2023-03-09 124609.png', 0, '2024-07-06 16:42:24', 12),
-(26, 'test product 2', 'test description 2', 1, 'uploads/Screenshot 2023-03-07 161447.png', 0, '2024-07-06 16:43:54', 12),
-(27, 'last hahah', 'last hahah', 12, 'uploads/Screenshot 2023-03-03 112830.png', 0, '2024-07-06 16:44:33', 12);
+(31, 'Penshoppe Sweet Scents Cupcake Body Spray 70ml', 'PENSHOPPE Sweet Scents Cupcake Body Spray 70ml  Bring out your sweetness with the tempting blend of your favorite red velvet cupcake dessert!   -Formulated with Alcohol Denat ; Aqua ; -Fragrance ; Benzophenone-4 ; and Colorant  -Body spray  -Cupcake scent  -70ml/4.23fl. oz  -Best used in 3-4 years from opening  -When to toss: If the product starts to smell off ; changes color ', 14, 'uploads/2juT14YTyz54f7DOfRRAMtyi5lNYrZQpifeQvDtp (1).png', 0, '2024-07-07 17:22:44', 12),
+(32, 'Penshoppe Pensport Extreme Fruity Musky Scent Body Spray - Perfume For Men 150ML', 'For the ultimate active lifestyle need of menBask in the fresh top notes of Citrus, Bergamot, Lemon, and Orange. Unique combination of Fruity, Floral, and Fougere provide a harmonious yet interesting middle notes. Woody and Musk undertones will leave them wanting more.', 12, 'uploads/sg-11134201-22110-4wbtxq3it7jv64.jpeg', 0, '2024-07-08 01:41:48', 0);
 
 -- --------------------------------------------------------
 
@@ -123,16 +117,9 @@ CREATE TABLE `transactions` (
 --
 
 INSERT INTO `transactions` (`id`, `order_id`, `payer_id`, `payment_id`, `amount`, `currency`, `status`, `payer_name`, `payer_email`, `user_id`, `transaction_date`) VALUES
-(13, '8U6602443B540583B', 'GYB3VQ8A6RVRU', '8U6602443B540583B', 2.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 15:08:37'),
-(14, '6C931032NT808714M', 'GYB3VQ8A6RVRU', '6C931032NT808714M', 2.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 15:14:47'),
-(15, '26P36977D4585735A', 'GYB3VQ8A6RVRU', '26P36977D4585735A', 2.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 15:35:07'),
-(16, '0H0604315B939823T', 'GYB3VQ8A6RVRU', '0H0604315B939823T', 2.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 17:32:12'),
-(17, '95H83421C1746570N', 'GYB3VQ8A6RVRU', '95H83421C1746570N', 2.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 17:35:42'),
-(18, '53G03672DS475063X', 'GYB3VQ8A6RVRU', '53G03672DS475063X', 2.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 17:38:16'),
-(19, '29D85636MU368793R', 'GYB3VQ8A6RVRU', '29D85636MU368793R', 2.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 17:42:41'),
-(20, '65W56854858565131', 'GYB3VQ8A6RVRU', '65W56854858565131', 1.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 17:43:31'),
-(21, '1X2766940L478524U', 'GYB3VQ8A6RVRU', '1X2766940L478524U', 4.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 14, '2024-07-06 20:41:15'),
-(22, '7U372280MJ928413P', 'GYB3VQ8A6RVRU', '7U372280MJ928413P', 120.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 18, '2024-07-06 20:47:31');
+(23, '5X270202YB4892027', 'GYB3VQ8A6RVRU', '5X270202YB4892027', 14.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 14, '2024-07-07 18:04:50'),
+(24, '26062677Y9795644P', 'GYB3VQ8A6RVRU', '26062677Y9795644P', 14.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 14, '2024-07-07 18:10:31'),
+(25, '23R09758A37876839', 'GYB3VQ8A6RVRU', '23R09758A37876839', 26.00, 'USD', 'COMPLETED', 'John Doe', 'customer.ericka@gmail.com', 14, '2024-07-07 23:56:02');
 
 -- --------------------------------------------------------
 
@@ -209,25 +196,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `CartID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
+  MODIFY `CartID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=198;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `users`

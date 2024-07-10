@@ -1,11 +1,12 @@
 <?php
     function dbconn(){
-        $server = "localhost";
-        $username = "root";
+        $server = "	sql200.byethost7.com";
+        // $username = "root";
+        $username = "b7_36872746";
         // riccharl_scent
-        $password = "";
+        $password = "ErickaValenzona_12345";
         // ZSXr]@P]NpS$
-        $db = "scent";
+        $db = "b7_36872746_scent";
         // riccharl_scent
         $conn = null;
         
